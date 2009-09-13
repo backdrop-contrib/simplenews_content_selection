@@ -1,0 +1,21 @@
+#############################################
+# Simplenews Content Selection installation #
+#############################################
+
+1. Download and install jQuery plugins from http://www.drupal.org/project/jquery_plugin
+2. Copy the file jquery.tablesorter.min.js from simplenews_content_selection/jquery_plugin folder to the jquery_plugin folder
+3. Enable the module in admin/build/modules
+
+######################################
+# Simplenews Content Selection usage #
+######################################
+
+1. Go to admin/settings/simplenews/content_selection and check the content types you want to enable them
+2. Go to admin/content/simplenews/content_selection to create a new newsletter
+
+########################################
+# Simplenews Content Selection theming #
+########################################
+
+Override function theme_simplenews_content_selection_newsletter_item to theme the output to the newsletter of the selected nodes. This function has one parameter $node. The parameter
+gives you access to the full node.

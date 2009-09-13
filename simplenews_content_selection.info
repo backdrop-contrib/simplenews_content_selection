@@ -1,0 +1,8 @@
+;$Id$
+name = Simplenews Content Selection
+description = Let's you select the content of a newsletter from a list of nodes
+core = 6.x
+version = 6.x-1.0-dev
+package = Mail
+dependencies[] = simplenews
+dependencies[] = jquery_plugin

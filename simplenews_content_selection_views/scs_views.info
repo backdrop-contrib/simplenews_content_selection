@@ -1,0 +1,8 @@
+;$Id$
+name = Simplenews Content Selection Views Integration
+description = Integrate Simplenews Content Selection with views and views bulk operations
+core = 6.x
+version = 6.x-1.0
+package = Mail
+dependencies[] = views_bulk_operations
+dependencies[] = scs

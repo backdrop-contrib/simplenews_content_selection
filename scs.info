@@ -1,0 +1,7 @@
+;$Id$
+name = Simplenews Content Selection
+description = Select Drupal content to create a newsletter
+core = 6.x
+version = 6.x-1.0-dev
+package = Mail
+dependencies[] = simplenews

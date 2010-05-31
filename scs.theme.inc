@@ -49,3 +49,27 @@
   	
   	return $output;
   }
+  
+  /**
+   * Theme the node sort form into a table
+   */
+  function theme_scs_sort_nodes($form) {
+    $headers = array(t('Node title'), t('Weight'));
+    $rows = array();
+
+    foreach ($form as $name=>$field) {
+      if (ereg('weight_', $name)) {
+        $nid = explode('_', $name);
+        $nid = $nid[1];
+        $title = db_result(db_query('SELECT title FROM {node} WHERE nid = %d', $nid));
+        unset($form[$name]['#title']);
+        
+        $row = array();
+        $row[] = $title;
+        $row[] = drupal_render($form[$name]);
+        $rows[] = $row;
+      }
+    }
+    
+    return theme('table', $headers, $rows) . drupal_render($form);
+  }

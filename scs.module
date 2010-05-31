@@ -32,6 +32,16 @@
   	  'type' => MENU_NORMAL_ITEM,
   	);
   	
+  	$items['admin/content/scs_sort_nodes'] = array(
+  	  'title' => 'Simplenews Content Select Sorter',
+  	  'description' => 'Sort the nodes like you want them in the newsletter',
+  	  'page callback' => 'drupal_get_form',
+  	  'page arguments' => array('scs_sort_nodes'),
+  	  'access arguments' => array('scs create newsletters'),
+  	  'file' => 'scs.pages.inc',
+  	  'type' => MENU_CALLBACK,
+  	);
+  	
   	return $items;
   }
   
@@ -53,6 +63,10 @@
   	  ),
   	  'scs_node_output' => array(
   	  	'arguments' => array('form' => NULL),
+  	    'file' => 'scs.theme.inc',
+  	  ),
+  	  'scs_sort_nodes' => array(
+  	    'arguments' => array('form' => NULL),
   	    'file' => 'scs.theme.inc',
   	  ),
   	);
@@ -81,7 +95,11 @@
   	  		unset($nodes[$key]);
   	  	}
   	  }
-  	  _scs_create_newsletter('', $nodes);
+  	  
+      unset($_SESSION['scs_nodes']);
+  	  $_SESSION['scs_nodes'] = $nodes;
+  	  
+  	  drupal_goto('admin/content/scs_sort_nodes');
   	}
   }
   

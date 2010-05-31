@@ -119,7 +119,7 @@
 	
   	if (count($content_types) != 0) {
   	$p = db_placeholders($content_types, 'varchar');
-	  	$result = db_query("SELECT nid, title, created FROM {node} WHERE type IN ($p)", $content_types);
+	  	$result = db_query("SELECT nid, title, created FROM {node} WHERE (node.status <> 0)type IN ($p)", $content_types);
 	  	
 	  	while ($node = db_fetch_object($result)) {
 	  		$node->created = date('Y-m-d H:i:s', $node->created);

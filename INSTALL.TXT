@@ -1,11 +1,3 @@
-#############################################
-# Simplenews Content Selection installation #
-#############################################
-
-1. Download and install jQuery plugins from http://www.drupal.org/project/jquery_plugin
-2. Copy the file jquery.tablesorter.min.js from simplenews_content_selection/jquery_plugin folder to the jquery_plugin folder
-3. Enable the module in admin/build/modules
-
 ######################################
 # Simplenews Content Selection usage #
 ######################################

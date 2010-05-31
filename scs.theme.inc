@@ -73,3 +73,14 @@
     
     return theme('table', $headers, $rows) . drupal_render($form);
   }
+  
+  /**
+   * Theme function to add the titles of the selected nodes at top of the newsletter
+   */
+  function theme_scs_node_titles($titles) {
+  	if (variable_get('scs_format', 'plain') == 'plain') {
+  		return implode("\n", $titles);
+  	} else {
+  		return '<div id="toc">' . theme('item_list', $titles) . '</div>';
+  	}
+  }

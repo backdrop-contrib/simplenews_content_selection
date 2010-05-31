@@ -69,6 +69,10 @@
   	    'arguments' => array('form' => NULL),
   	    'file' => 'scs.theme.inc',
   	  ),
+  	  'scs_node_titles' => array(
+  	  	'arguments' => array('titles' => array()),
+  	  	'file' => 'scs.theme.inc',
+  	  ),
   	);
   }
   
@@ -143,10 +147,24 @@
   	
   	//Create the body of the newsletter
   	$body = '';
+  	$titles = array();
 
   	foreach ($nodes as $node) {
   		$node = node_load(array('nid' => $node));
+  		
+  		if (variable_get('scs_titles', 0) != 0) {
+  		  if (variable_get('scs_format', 'plain') == 'plain') {
+  		  	$titles[] = $node->title;
+  		  } else {
+  		  	$titles[] = '<a href="#node_' . $node->nid . '">' . $node->title . '</a>';
+  		  }
+  		}
+  		
   		$body .= theme('scs_node_output', $node);
+  	}
+  	
+  	if (variable_get('scs_titles', 0) != 0) {
+  		$body = theme('scs_node_titles', $titles) . $body;
   	}
   	
   	$newsletter = new StdClass();

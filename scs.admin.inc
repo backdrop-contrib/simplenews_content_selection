@@ -28,6 +28,13 @@
   	  '#default_value' => variable_get('scs_format', 'plain'),
   	);
   	
+  	$form['scs_titles'] = array(
+	  '#type' => 'checkbox',
+  	  '#title' => t('Embed title in newsletter and create bookmarks (if HTML)'),
+  	  '#description' => t('All titles of the selected nodes will be added at the beginning of the newsletter. If HTML is available, titles will be bookmarks.'),
+  	  '#default_value' => variable_get('scs_titles', 0),
+  	);
+  	
   	return system_settings_form($form);
   }
   

@@ -7,9 +7,7 @@ $(document).ready(function(){
 					$('input[@type=checkbox]').each(
 						function () {
 							if (this.id && this.checked) {
-								id = this.id;
-								id = id.split('-');
-								id = id[2];
+								id = this.value;
 								nodes += id + '-';
 							}
 						}

@@ -32,7 +32,7 @@
   	  '#type' => 'submit',
   	  '#value' => t('Create newsletter'),
   	);
-  	
+
   	return $form;
   }
   

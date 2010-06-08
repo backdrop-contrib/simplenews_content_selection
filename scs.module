@@ -29,7 +29,7 @@
   	  'page arguments' => array('scs_node_selection'),
   	  'access arguments' => array('scs create newsletters'),
   	  'file' => 'scs.pages.inc',
-  	  'type' => MENU_NORMAL_ITEM,
+  	  'type' => MENU_LOCAL_TASK,
   	);
   	
   	$items['admin/content/scs_sort_nodes'] = array(
@@ -53,11 +53,11 @@
   		'administer scs' => array(
   			'title' => t('Administer Simplenews Content Selection'),
   			'description' => t('Perform administration task for Simplenews Content Selection'),
-  		);
+  		),
   		'scs create newsletters' => array(
   			'title' => t('Simplenews Content Selection create newsletters'),
   			'description' => t('Create newsletters with Simplenews Content Selection'),
-  		);
+  		),
   	);
   }
   
@@ -134,10 +134,10 @@
   	}
 	
   	if (count($content_types) != 0) {
-  		$p = db_placeholders($content_types, 'varchar');
-	  	$result = db_query("SELECT nid, title, created FROM {node} WHERE (node.status <> 0)AND type IN ($p)", $content_types);
+  		//$p = db_placeholders($content_types, 'varchar');
+	  	$result = db_query("SELECT nid, title, created FROM {node} WHERE (node.status <> 0) AND type IN (:types)", array(':types' => $content_types));
 	  	
-	  	while ($node = db_fetch_object($result)) {
+	  	foreach ($result->fetchAll() as $node) {
 	  		$node->created = date('Y-m-d H:i:s', $node->created);
 	  		$nodes[] = $node;
 	  	}

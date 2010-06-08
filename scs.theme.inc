@@ -30,9 +30,21 @@
   		$data[] = $nodearray;
   	}
   	
-  	$headers = array('', t('Nid'), t('Title'), t('Created'));
+  	//$headers = array('', t('Nid'), t('Title'), t('Created'));
+  	$headers = array(
+  		array('data' => ''),
+  		array('data' => t('Nid')),
+  		array('data' => t('Title')),
+  		array('data' => t('Created')),
+  	);
   	
-  	return drupal_render($form['newsletter_title']) . $explain . theme('table', $headers, $data) . drupal_render($form);
+  	$table = theme('table', array(
+  		'header' => $headers,
+  		'rows' => $data,
+  	));
+  	
+  	//return drupal_render($form['newsletter_title']) . $explain . $table . drupal_render($form);
+  	return $table;
   }
   
   /*

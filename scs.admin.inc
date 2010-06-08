@@ -42,9 +42,10 @@
    * Return avaiable node types in option list
    */
   function _scs_get_node_types() {
+  	$types = _node_types_build();
   	$options = array();
   	
-  	foreach (node_get_types() as $name=>$type) {
+  	foreach ($types->types as $name=>$type) {
   		$options[$name] = $type->name;
   	}
   	

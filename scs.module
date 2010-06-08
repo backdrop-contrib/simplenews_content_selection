@@ -12,14 +12,14 @@
   function scs_menu() {
   	$items = array();
   	
-  	$items['admin/settings/simplenews/scs'] = array(
+  	$items['admin/config/simplenews/scs'] = array(
   	  'title' => 'Simplenews Content Selection',
   	  'description' => 'Configure what node types could be used for SCS, ...',
+  	  'type' => MENU_LOCAL_TASK,
   	  'page callback' => 'drupal_get_form',
   	  'page arguments' => array('scs_admin_settings_form'),
   	  'access arguments' => array('administer scs'),
   	  'file' => 'scs.admin.inc',
-  	  'type' => MENU_NORMAL_ITEM,
   	);
   	
   	$items['admin/content/scs_node_selection'] = array(
@@ -48,8 +48,17 @@
   /*
    * Implementation of hook_perm
    */
-  function scs_perm() {
-  	return array('administer scs', 'scs create newsletters');
+  function scs_permission() {
+  	return array(
+  		'administer scs' => array(
+  			'title' => t('Administer Simplenews Content Selection'),
+  			'description' => t('Perform administration task for Simplenews Content Selection'),
+  		);
+  		'scs create newsletters' => array(
+  			'title' => t('Simplenews Content Selection create newsletters'),
+  			'description' => t('Create newsletters with Simplenews Content Selection'),
+  		);
+  	);
   }
   
   /*
@@ -102,6 +111,9 @@
   	  
       unset($_SESSION['scs_nodes']);
   	  $_SESSION['scs_nodes'] = $nodes;
+  	  
+  	  //TODO keep this in mind, for the moment there is no info about drupal_set_session
+  	  //drupal_set_session('scs_nodes', $nodes);
   	  
   	  drupal_goto('admin/content/scs_sort_nodes');
   	}

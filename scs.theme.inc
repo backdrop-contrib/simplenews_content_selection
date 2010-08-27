@@ -106,12 +106,12 @@ function theme_scs_sort_nodes($form) {
 /**
  * Theme function to add the titles of the selected nodes at top of the newsletter
  */
-function theme_scs_node_titles($titles) {
+function theme_scs_node_titles($variables) {
   if (variable_get('scs_format', 'plain') == 'plain') {
-    return implode("\n", $titles);
+    return implode("\n", $variables['titles']);
   }
   else {
-    return '<div id="toc">' . theme('item_list', $titles) . '</div>';
+    return '<div id="toc">' . theme('item_list', array('items' => $variables['titles'])) . '</div>';
   }
 }
 
@@ -138,7 +138,7 @@ function theme_scs_newsletter_output($variables) {
 
   // ToC (if required)
   if ($variables['toc']) {
-    $body = theme('scs_node_titles', $titles) . $body;
+    $body = theme('scs_node_titles', array('titles' => $titles)) . $body;
   }
 
   // Complete newsletter body

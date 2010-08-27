@@ -101,7 +101,7 @@ function scs_theme() {
       'file' => 'scs.theme.inc',
     ),
     'scs_node_titles' => array(
-      'arguments' => array('titles' => array()),
+      'variables' => array('titles' => array()),
       'file' => 'scs.theme.inc',
     ),
   );

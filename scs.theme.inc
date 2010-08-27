@@ -64,12 +64,12 @@ function theme_scs_node_selection(&$form) {
  * Each selected node goes true this function to create a nice body
  */
 function theme_scs_node_output($node) {
+  //TODO Fix a teaser of this node
   $output = '';
-    
-  $output = '<div id="node_' . $node->nid . '">';
-    $output .= '<h1>' . $node->title . '</h1>';
-    $output .= '<p>' . node_teaser($node->body) . '</p>';
-    $output .= '<p>' . l(t('Read more'), 'node/' . $node->nid) . '</p>';
+  $output = '<div id="node_' . $node['nid'] . '">';
+    $output .= '<h1>' . $node['title'] . '</h1>';
+    $output .= '<p>' . $node['body'][LANGUAGE_NONE][0]['value'] . '</p>';
+    $output .= '<p>' . l(t('Read more'), 'node/' . $node['nid']) . '</p>';
   $output .= '</div>';
   
   return $output;
@@ -118,13 +118,13 @@ function theme_scs_node_titles($titles) {
 /**
  * Theme a complete newsletter.
  */
-function theme_scs_newsletter_output($nodes, $toc) {
+function theme_scs_newsletter_output($variables) {
   $body = '';
   $titles = array();
 
   // Node information
-  foreach ($nodes as $node) {
-    if ($toc) {
+  foreach ($variables['nodes'] as $node) {
+    if ($variables['toc']) {
       if (variable_get('scs_format', 'plain') == 'plain') {
         $titles[] = $node->title;
       }
@@ -132,11 +132,12 @@ function theme_scs_newsletter_output($nodes, $toc) {
         $titles[] = '<a href="#node_' . $node->nid . '">' . $node->title . '</a>';
       }
     }
-    $body .= theme('scs_node_output', $node);
+
+    $body .= theme('scs_node_output', (array)$node);
   }
 
   // ToC (if required)
-  if ($toc) {
+  if ($variables['toc']) {
     $body = theme('scs_node_titles', $titles) . $body;
   }
 

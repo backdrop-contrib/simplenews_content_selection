@@ -29,7 +29,7 @@
   	
   	$form = array();
   	
-  	if (!isset($form_state['storage'])) {
+  	if (!isset($form_state['scs'])) {
   		//First step
   		$form['step'] = array(
   			'#type' => 'hidden',
@@ -102,7 +102,8 @@
     		'#value' => t('Filter'),
     	);
     	
-    	$form['submit'] = array(
+    	$form['actions'] = array('#type' => 'actions');
+    	$form['actions']['submit'] = array(
     	  '#type' => 'submit',
     	  '#value' => t('Sort nodes'),
     	);
@@ -112,14 +113,20 @@
   			'#value' => 2,
   		);
   		
-  		$form = array_merge($form, scs_sort_nodes($form_state['storage']['nodes']));
+  		$form = array_merge($form, scs_sort_nodes($form_state['scs']['nodes']));
+
+  		$form['actions']['submit'] = array(
+  		  '#type' => 'submit',
+  		  '#value' => t('Create newsletter'),
+  		);
   	}
   	
   	return $form;
   }
   
   function scs_node_selection_validate($form, &$form_state) {
-  	if ($form_state['values']['op'] != t('Filter')) {
+  	//TODO Fix the notices here
+  	if ($form_state['values']['op'] != t('Create newsletter')) {
   		if ($form_state['values']['newsletter_title'] == '' && $form_state['values']['step'] == 1) {
   			form_set_error('newsletter_title', t('This field is required.'));
   		}
@@ -132,16 +139,16 @@
   function scs_node_selection_submit($form, &$form_state) {
   	if ($form_state['values']['step'] == 1) {
   		//Standard fields
-  		$form_state['storage']['title'] = $form_state['values']['newsletter_title'];
-  		$form_state['storage']['toc'] = $form_state['values']['newsletter_toc'];
+  		$form_state['scs']['title'] = $form_state['values']['newsletter_title'];
+  		$form_state['scs']['toc'] = $form_state['values']['newsletter_toc'];
   		
   		//Content type
   		if (array_key_exists('newsletter_content_type', $form_state['values'])) {
-  			$form_state['storage']['type'] = $form_state['values']['newsletter_content_type'];
+  			$form_state['scs']['type'] = $form_state['values']['newsletter_content_type'];
   		} else {
   			$types = variable_get('simplenews_content_types', array());
   			foreach ($types as $type) {
-  				$form_state['storage']['type'] = $type;
+  				$form_state['scs']['type'] = $type;
   			}
   		}
   		
@@ -152,10 +159,10 @@
     		}
     	}
     	
-    	$form_state['storage']['nodes'] = $nodes;
-  		
-  		//Next step
-  		$form_state['storage']['step'] = 2;
+    	$form_state['scs']['nodes'] = $nodes;
+
+    	//Next step
+  		$form_state['scs']['step'] = 2;
   		$form_state['rebuild'] = TRUE;
   	} else {
     	foreach($form_state['values'] as $key=>$value) {
@@ -168,8 +175,10 @@
       	
       	asort($nodes);
     	$nodes = array_keys($nodes);
-    	
-      	_scs_create_newsletter($form_state['storage']['title'], $nodes, $form_state['storage']['toc'], $form_state['storage']['type']);
+
+    	//TODO Type has to be fixed here
+    	$type = 'simplenews';
+      	_scs_create_newsletter($form_state['scs']['title'], $nodes, $form_state['scs']['toc'], $type);
   	}
   }
   
@@ -231,15 +240,17 @@
         '#title' => t('Weight'),
         '#options' => array(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10),
         '#default_value' => $counter, 
-        '#attributes' => array('class' => 'scs_weight'),
+        '#attributes' => array('class' => array('scs_weight')),
       );
       
       $counter++;
     }
     
-    $form['submit'] = array(
+    $form['actions'] = array('#type' => 'actions');
+    $form['actions']['submit'] = array(
       '#type' => 'submit',
       '#value' => t('Create newsletter'),
+      '#submit' => array('scs_sort_nodes_submit'),
     );
     
     return $form;
@@ -268,9 +279,9 @@
 			$type = $selected;
 		}
 	}
-    
-    asort($nodes);
+
+	asort($nodes);
     $nodes = array_keys($nodes);
-    
+
     _scs_create_newsletter($form_state['values']['newsletter_title'], $nodes, $form_state['values']['newsletter_toc'], $type);
   }

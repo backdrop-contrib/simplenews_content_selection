@@ -7,6 +7,13 @@
  */
 
 /**
+ * TODO
+ * - Fix all the todo's
+ * - Add language support
+ * - Newsletter taxonomy integration
+ */
+
+/**
  * Implements hook_menu()
  */
 function scs_menu() {
@@ -82,11 +89,11 @@ function scs_theme() {
       'file' => 'scs.theme.inc',
     ),
     'scs_node_output' => array(
-      'arguments' => array('form' => NULL),
+      'variables' => array('node' => NULL),
       'file' => 'scs.theme.inc',
     ),
     'scs_newsletter_output' => array(
-      'arguments' => array('nodes' => NULL, 'toc' => FALSE),
+      'variables' => array('nodes' => NULL, 'toc' => FALSE),
       'file' => 'scs.theme.inc',
     ),
     'scs_sort_nodes' => array(
@@ -205,12 +212,13 @@ function _scs_get_nodes($headers = array(), $filters = array()) {
  * Newsletter creator function
  */
 function _scs_create_newsletter($title, $nodes, $toc = 0, $type) {
-  global $user, $custom_theme;
-  
-  if ($theme = variable_get('theme_default', FALSE)) {
-  	$custom_theme = $theme;
-  	init_theme();
-  }
+  global $user;
+
+  //TODO Fix this
+  /*if ($custom_theme = variable_get('theme_default', FALSE)) {
+  	$theme = $custom_theme;
+  	drupal_theme_initialize();
+  }*/
     
   //Title
   if ($title == '') {
@@ -221,17 +229,20 @@ function _scs_create_newsletter($title, $nodes, $toc = 0, $type) {
   foreach ($nodes as $node) {
     $complete_nodes[] = node_load($node);
   }
-
+  
   // Create the body of the newsletter
-  $body = theme('scs_newsletter_output', $complete_nodes, $toc);
+  $body = theme('scs_newsletter_output', array('nodes' => $complete_nodes, 'toc' => $toc));
     
   $newsletter = new StdClass();
-  $newsletter->type = $type;
+  //TODO Make this variable
+  $newsletter->type = 'simplenews';
   $newsletter->uid = $user->uid;
+  $newsletter->language = LANGUAGE_NONE;
   $newsletter->title = $title;
-  $newsletter->body = $body;
-  $newsletter->teaser = node_teaser($body);
-  $newsletter->filter = variable_get('filter_default_format', 1);
+  $newsletter->body[LANGUAGE_NONE][0]['value'] = $body;
+  //$newsletter->teaser['und']['summary'] = node_teaser($body);
+  $newsletter->body[LANGUAGE_NONE][0]['summary'] = '';
+  $newsletter->body[LANGUAGE_NONE][0]['format'] = variable_get('filter_fallback_format', 1);
   $newsletter->status = variable_get('scs_publish_default', 1);
   $newsletter->revision = 1;
   $newsletter->promote = 0;
@@ -241,7 +252,8 @@ function _scs_create_newsletter($title, $nodes, $toc = 0, $type) {
   $newsletter->simplenews['s_format'] = strtolower(variable_get('scs_format', 'plain'));
   $newsletter->priority = 0;
   $newsletter->receipt = 0;
-
+  $newsletter->field_simplenews_term[LANGUAGE_NONE][0]['tid'] = 1;
+  
   node_save($newsletter);
     
   drupal_goto('node/' . $newsletter->nid . '/edit');

@@ -1,4 +1,3 @@
-;$Id$
 name = Simplenews Content Selection Views Integration
 description = Integrate Simplenews Content Selection with views and views bulk operations
 core = 6.x

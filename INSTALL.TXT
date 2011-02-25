@@ -1,4 +1,3 @@
-//$Id$
 
 Welcome to Simplenews Content Selection.
 This module allows you to select content from your website and send a newsletter with the selected content.

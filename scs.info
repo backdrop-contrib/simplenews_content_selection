@@ -1,4 +1,3 @@
-;$Id$
 name = Simplenews Content Selection
 description = Select Drupal content to create a newsletter
 core = 7.x

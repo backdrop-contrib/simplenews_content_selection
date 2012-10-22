@@ -57,7 +57,7 @@ function scs_views_selection_form_submit($form, &$form_state) {
   $output = '';
   
   foreach ($form_state['values'] as $field=>$value) {
-    if (ereg('view_', $field) && $value == 1) {
+    if (preg_match('/^view_/', $field) && $value == 1) {
       $field = substr($field, 5);
       $output .= views_embed_view($field, 'default');
     }

@@ -83,7 +83,7 @@ function theme_scs_sort_nodes($form) {
   $rows = array();
 
   foreach ($form as $name=>$field) {
-    if (ereg('weight_', $name)) {
+    if (preg_match('/^weight_/', $name)) {
       $nid = explode('_', $name);
       $nid = $nid[1];
       $title = db_query('SELECT title FROM {node} WHERE nid = :nid', array(':nid' => $nid))->fetchField();

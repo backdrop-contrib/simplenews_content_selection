@@ -153,7 +153,7 @@
   		
   		//Selected nodes
     	foreach ($form_state['values'] as $field=>$value) {
-    		if (ereg('nid_', $field) && $value != 0) {
+        if (preg_match('/^nid_/', $field) && $value != 0) {
     		  $nodes[] = $value;
     		}
     	}
@@ -165,7 +165,7 @@
   		$form_state['rebuild'] = TRUE;
   	} else {
     	foreach($form_state['values'] as $key=>$value) {
-          if (ereg('weight_', $key)) {
+          if (preg_match('/^weight_/', $key)) {
             $nid = explode('_', $key);
             $nid = $nid[1];
             $nodes[$nid] = $value;
@@ -262,7 +262,7 @@
     $nodes = array();
 
     foreach($form_state['values'] as $key=>$value) {
-      if (ereg('weight_', $key)) {
+      if (preg_match('/^weight_/', $key)) {
         $nid = explode('_', $key);
         $nid = $nid[1];
         $nodes[$nid] = $value;

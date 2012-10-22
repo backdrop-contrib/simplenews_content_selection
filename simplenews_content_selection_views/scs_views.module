@@ -1,5 +1,5 @@
 <?php
-  
+
 /**
  * @file
  * Integrate Simplenews Content Selection with views and views bulk operations
@@ -25,15 +25,15 @@ function scs_views_action_info() {
 function scs_views_create_newsletter_action_form($context) {
   $nodes = array();
   $counter = 0;
-  
+
   foreach ($context['selection'] as $node) {
-  	$nodes['node_' . $counter] = $node->nid;
-  	$counter++;
+    $nodes['node_' . $counter] = $node->nid;
+    $counter++;
   }
-  
+
   $query = http_build_query($nodes, '', '&');
   drupal_goto('admin/content/scs_sort_nodes', $query);
-  
+
   //Done this to make sure VBO is still working.
   $form = array();
   return $form;

@@ -9,53 +9,23 @@
  * Theme the node selection form
  */
 function theme_scs_node_selection(&$form) {
-  $form = $form['form'];
-
-  if ($form['step']['#value'] == 1) {
-    //Headers
-    $headers = array(
-      '',
-      array(
-        'data' => t('Nid'),
-        'field' => 'nid',
-        'sort' => 'asc',
-      ),
-      array(
-        'data' => t('Title'),
-        'field' => 'title',
-      ),
-      array(
-        'data' => t('Created'),
-        'field' => 'created',
-      ),
-    );
-
-    $nodes = _scs_get_nodes($headers);
-
-    $data = array();
-
-    $explain = '';
-
-    if (user_access('administer scs')) {
-      $explain = '<div class="form-item">' . t('Want to select more nodes? Add more content types ') . l(t('here'), 'admin/settings/simplenews/scs') . '.' . '</div>';
+  $form = &$form['form'];
+  if ($form['step']['#value'] == 2) {
+    $headers = array(t('Node title'), t('Weight'));
+    $rows = array();
+    foreach (element_children($form['nodes']) as $nid) {
+      $row = array();
+      $row[] = db_query('SELECT title FROM {node} WHERE nid = :nid', array(':nid' => $nid))->fetchField();
+      $row[] = drupal_render($form['nodes'][$nid]['weight']);
+      $rows[] = array(
+        'data' => $row,
+        'class' => array('draggable'),
+      );
     }
-
-    foreach ($nodes as $node) {
-      if (array_key_exists('nid_' . $node->nid, $form)) {
-        $nodearray = array();
-        $nodearray[] = drupal_render($form['nid_' . $node->nid]);
-        $nodearray[] = $node->nid;
-        $nodearray[] = $node->title;
-        $nodearray[] = $node->created;
-
-        $data[] = $nodearray;
-      }
-    }
-
-    return drupal_render($form['newsletter_title']) . drupal_render($form['newsletter_toc']) . $explain . drupal_render($form['filters']) . theme('table', array('header' => $headers, 'rows' => $data)) . drupal_render_children($form);
-  }
-  else {
-    return theme('scs_sort_nodes', $form);
+    $output = theme('table', array('header' => $headers, 'rows' => $rows, 'attributes' => array('id' => 'scs-sort-nodes')));
+    $output .= drupal_render_children($form);
+    drupal_add_tabledrag('scs-sort-nodes', 'order', 'sibling', 'node-weight');
+    return $output;
   }
 }
 

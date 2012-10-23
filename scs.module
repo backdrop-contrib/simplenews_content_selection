@@ -18,9 +18,9 @@
 function scs_menu() {
   $items = array();
 
-  $items['admin/config/simplenews/scs'] = array(
+  $items['admin/config/services/simplenews/settings/scs'] = array(
     'title' => 'Simplenews Content Selection',
-    'description' => 'Configure what node types could be used for SCS, ...',
+    'description' => 'Configure what node types could be used for SCS',
     'page callback' => 'drupal_get_form',
     'page arguments' => array('scs_admin_settings_form'),
     'access arguments' => array('administer scs'),
@@ -28,34 +28,14 @@ function scs_menu() {
     'type' => MENU_NORMAL_ITEM,
   );
 
-  $items['admin/content/scs_node_selection/nodes'] = array(
-    'title' => 'From nodes',
-    'description' => 'Select nodes to create a newsletter',
-    'page callback' => 'drupal_get_form',
-    'page arguments' => array('scs_node_selection'),
-    'access arguments' => array('scs create newsletters'),
-    'file' => 'scs.pages.inc',
-    'type' => MENU_LOCAL_TASK,
-  );
-
   $items['admin/content/scs_node_selection'] = array(
-    'title' => 'Simplenews Content Selection Creator',
+    'title' => 'Create newsletter from content',
     'description' => 'Select nodes to create a newsletter',
     'page callback' => 'drupal_get_form',
     'page arguments' => array('scs_node_selection'),
     'access arguments' => array('scs create newsletters'),
     'file' => 'scs.pages.inc',
     'type' => MENU_LOCAL_TASK,
-  );
-
-  $items['admin/content/scs_sort_nodes'] = array(
-    'title' => 'Simplenews Content Select Sorter',
-    'description' => 'Sort the nodes like you want them in the newsletter',
-    'page callback' => 'drupal_get_form',
-    'page arguments' => array('scs_sort_nodes'),
-    'access arguments' => array('scs create newsletters'),
-    'file' => 'scs.pages.inc',
-    'type' => MENU_CALLBACK,
   );
 
   return $items;
@@ -65,14 +45,13 @@ function scs_menu() {
  * Implements hook_permission()
  */
 function scs_permission() {
-  //return array('administer scs', 'scs create newsletters');
   return array(
     'administer scs' => array(
       'title' => t('Administer Simplenews Content Selection'),
       'description' => t('User can perform administrative tasks like changing default title etc'),
     ),
     'scs create newsletter' => array(
-      'title' => t('Create newsletters'),
+      'title' => t('Create newsletters with content selection'),
       'description' => t('User can create newsletter with Simplenews Content Selection'),
     ),
   );

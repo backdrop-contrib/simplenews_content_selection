@@ -77,7 +77,6 @@ function scs_node_selection($form, &$form_state) {
     // Table header
     $header = array(
       'title' => array('data' => t('Title'), 'field' => 'title', 'sort' => 'ASC'),
-      'nid' => array('data' => t('Node ID'), 'field' => 'nid'),
       'type' => array('data' => t('Type'), 'field' => 'type'),
       'created' => array('data' => t('Created'), 'field' => 'created'),
     );

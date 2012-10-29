@@ -14,8 +14,8 @@ function scs_admin_settings_form() {
   $form['scs_content_types'] = array(
     '#type' => 'checkboxes',
     '#title' => t('Content types'),
-    '#description' => t('Select the content types that must be avaiable for node selection'),
-    '#options' => _scs_get_node_types(),
+    '#description' => t('Select the content types that must be available for node selection'),
+    '#options' => array_map('scs_node_type_labels', node_type_get_types()),
     '#default_value' => variable_get('scs_content_types', array()),
   );
 
@@ -48,15 +48,6 @@ function scs_admin_settings_form() {
   return system_settings_form($form);
 }
 
-/*
- * Return avaiable node types in option list
- */
-function _scs_get_node_types() {
-  $options = array();
-
-  foreach (node_type_get_types() as $name => $type) {
-    $options[$name] = $type->name;
-  }
-
-  return $options;
+function scs_node_type_labels($type) {
+  return $type->name;
 }

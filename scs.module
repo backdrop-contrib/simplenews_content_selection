@@ -34,7 +34,6 @@ function scs_menu() {
     'page callback' => 'drupal_get_form',
     'page arguments' => array('scs_node_selection'),
     'access arguments' => array('scs create newsletters'),
-    'file' => 'scs.pages.inc',
     'type' => MENU_LOCAL_TASK,
   );
 
@@ -66,124 +65,40 @@ function scs_theme() {
       'render element' => 'form',
       'file' => 'scs.theme.inc',
     ),
-    'scs_node_output' => array(
-      'variables' => array('node' => NULL),
-      'file' => 'scs.theme.inc',
-    ),
     'scs_newsletter_output' => array(
       'variables' => array('nodes' => NULL, 'toc' => FALSE),
-      'file' => 'scs.theme.inc',
-    ),
-    'scs_sort_nodes' => array(
-      'render element' => 'form',
-      'file' => 'scs.theme.inc',
-    ),
-    'scs_node_titles' => array(
-      'variables' => array('titles' => array()),
       'file' => 'scs.theme.inc',
     ),
   );
 }
 
 /**
+ * Implements hook_node_operations().
+ */
+function scs_node_operations() {
+  $operations = array(
+    'scs_create' => array(
+      'label' => t('Create newsletter'),
+      'callback' => NULL,
+    ),
+  );
+  return $operations;
+}
+
+/**
  * Implements hook_form_alter()
- * Used to add an extra update operation to admin/content/node
+ * Used to add an extra multistep operation to admin/content/node
  */
 function scs_form_alter(&$form, &$form_state, $form_id) {
   if ($form_id == 'node_admin_content') {
-    $form['admin']['options']['operation']['#options']['scs'] = t('Create newsletter');
-    $form['admin']['options']['submit']['#submit'][] = 'scs_admin_content_node_submit';
-  }
-}
-
-/**
- * Extra submit function on admin/content/node form
- */
-function scs_admin_content_node_submit($form, &$form_state) {
-  if ($form_state['values']['operation'] == 'scs') {
-    $nodes = $form_state['values']['nodes'];
-
-    foreach ($nodes as $key => $selected) {
-      if ($selected == 0) {
-        unset($nodes[$key]);
-      }
-    }
-
-    $counter = 0;
-
-    foreach ($nodes as $key => $nid) {
-      $nodes['nid_' . $counter] = $nid;
-      unset($nodes[$key]);
-      $counter++;
-    }
-
-    $query = http_build_query($nodes, '', '&');
-    drupal_goto('admin/content/scs_sort_nodes', $query);
-  }
-}
-
-/**
- * Get nodes avaiable for selection
- */
-function _scs_get_nodes($headers = array(), $filters = array()) {
-  $nodes = array();
-
-  $content_types = variable_get('scs_content_types', array());
-
-  foreach ($content_types as $type => $selected) {
-    if ($selected == '0') {
-      unset($content_types[$type]);
+    if (isset($form_state['values']['operation']) && $form_state['values']['operation'] == 'scs_create') {
+      unset($form['filter']);
+      unset($form['admin']);
+      $form_state['scs'] = TRUE;
+      scs_node_selection($form, $form_state);
+      $form['#submit'][] = 'scs_node_selection_submit';
     }
   }
-
-  if (count($content_types) != 0) {
-    //Filters
-    if (!empty($filters)) {
-      $filtersql = array();
-
-      if (array_key_exists('nid', $filters)) {
-        $filtersql[] = sprintf('nid=%d', $filters['nid']);
-      }
-
-      if (array_key_exists('title', $filters)) {
-        $filtersql[] = "title LIKE '" . $filters['title'] . "%'";
-      }
-
-      if (array_key_exists('type', $filters)) {
-        $content_types = array($filters['type']);
-      }
-
-      $prefix = '';
-
-      if (!empty($filtersql)) {
-        $prefix = ' AND ';
-      }
-
-      $filtersql = $prefix . implode(' AND ', $filtersql);
-    }
-    else {
-      $filtersql = '';
-    }
-
-    //$p = db_placeholders($content_types, 'varchar');
-
-    //Table sort
-    //TODO tablesort_sql doesn't exist anymore, fix this
-    /*$tablesortsql = '';
-    if (!empty($headers)) {
-      $tablesortsql = tablesort_sql($headers);
-    }*/
-
-    //TODO Fix this query
-    //$result = db_query("SELECT nid, title, created FROM {node} WHERE ({node}.status <> 0) AND type IN (:types):filtersql :tablesortsql", array(':types' => $content_types, ':filtersql' => $filtersql, ':tablesortsql' => $tablesortsql));
-    $result = db_query("SELECT nid, title, created FROM {node} WHERE ({node}.status <> 0) AND type IN (:types)", array(':types' => $content_types), array('fetch' => PDO::FETCH_ASSOC));
-
-    foreach ($result as $record) {
-      $nodes[] = (object) $record;
-    }
-  }
-
-  return $nodes;
 }
 
 /**
@@ -238,18 +153,173 @@ function _scs_create_newsletter($title, $nodes, $toc = 0, $type) {
 }
 
 /**
- * Interal to get the possible content types to filter on
+ * Page callback: Node selection page also known as the first way
+ * to use this module
  */
-function _scs_get_typefilter() {
-  $types = variable_get('scs_content_types', array());
-  $options = array();
-  $options[0] = t('Select node type');
-
-  foreach ($types as $key => $value) {
-    if (!is_numeric($value)) {
-      $options[$key] = $value;
-    }
+function scs_node_selection(&$form, &$form_state) {
+  // Prevent the user from using this page if there is no content type
+  // enabled for selection
+  if (!variable_get('scs_content_types', FALSE)) {
+    drupal_set_message(t('You need to enable some content types for selection in order to use this module. You can enable them in !link.', array('!link' => l(t('Simplenews Content Selection settings'), 'admin/config/simplenews/scs'))), 'error');
+    return "";
   }
 
-  return $options;
+  if (!isset($form_state['scs'])) {
+    // This is the first step of our two-step form
+    $form['step'] = array(
+      '#type' => 'hidden',
+      '#value' => 1,
+    );
+
+    // Newsletter-related elements
+    $form['newsletter_title'] = array(
+      '#type' => 'textfield',
+      '#title' => t('Title'),
+      '#description' => t('Enter the title of this newsletter'),
+      '#default_value' => variable_get('scs_default_title', ''),
+      '#required' => TRUE,
+    );
+
+    $form['newsletter_toc'] = array(
+      '#type' => 'checkbox',
+      '#title' => t('Create a table of contents'),
+      '#description' => t('Create a table of contents at top of the newsletter with the titles of the selected nodes. If newsletter is HTML format, these table of contents will be bookmarks.'),
+    );
+
+    // Now begins the real content selection
+
+    // Filtering
+    $form['filters'] = array(
+      '#type' => 'fieldset',
+      '#title' => t('Filters'),
+      '#collapsible' => TRUE,
+      '#collapsed' => (empty($filters) ? TRUE : FALSE),
+    );
+    $form['filters']['nid'] = array(
+      '#type' => 'textfield',
+      '#title' => t('Nid'),
+      '#description' => t('Filter on a single nid.'),
+      '#default_value' => $form_state['values']['nid'] ? : '',
+    );
+    $form['filters']['title'] = array(
+      '#type' => 'textfield',
+      '#title' => t('Title'),
+      '#description' => t('Filter on title, matching the first characters.'),
+      '#default_value' => $form_state['values']['title'] ? : '',
+    );
+    $types = array(t('None')) + drupal_map_assoc(array_filter(variable_get('scs_content_types', array())));
+    $form['filters']['type'] = array(
+      '#type' => 'select',
+      '#title' => t('Type'),
+      '#options' => $types,
+      '#multiple' => TRUE,
+      '#default_value' => $form_state['values']['type'] ? : array_keys($types),
+    );
+    $form['filters']['filter'] = array(
+      '#type' => 'submit',
+      '#value' => t('Filter'),
+    );
+
+
+    // Table header
+    $header = array(
+      'title' => array('data' => t('Title'), 'field' => 'title', 'sort' => 'ASC'),
+      'type' => array('data' => t('Type'), 'field' => 'type'),
+      'created' => array('data' => t('Created'), 'field' => 'created'),
+    );
+
+    // Rows
+    $rows = array();
+    $query = db_select('node', 'n')
+      ->extend('TableSort')
+      ->fields('n', array('nid', 'title', 'type', 'created'))
+      ->orderByHeader($header);
+    if (!empty($form_state['input'])) {
+      if (!empty($form_state['input']['nid'])) {
+        $query->condition('nid', $form_state['values']['nid']);
+      }
+      if (!empty($form_state['input']['title'])) {
+        $query->condition('title', $form_state['input']['nid'] . '%', 'LIKE');
+      }
+    }
+    if (!empty($form_state['input']['type'])) {
+      $query->condition('type', $form_state['input']['type']);
+    }
+    else {
+      $query->condition('type', array_keys($types));
+    }
+    $results = $query->execute();
+
+    foreach ($results as $node) {
+      $rows[$node->nid] = array(
+        'title' => l($node->title, 'node/' . $node->nid . '/edit'),
+        'type' => $node->type,
+        'created' => format_date($node->created),
+      );
+    }
+    $form['nodes'] = array(
+      '#type' => 'tableselect',
+      '#header' => $header,
+      '#options' => $rows,
+      '#empty' => t('No nodes found'),
+    );
+
+    // Submit button
+    $form['submit'] = array(
+      '#type' => 'submit',
+      '#value' => t('Sort nodes'),
+    );
+  }
+  else {
+    $form['step'] = array(
+      '#type' => 'hidden',
+      '#value' => 2,
+    );
+
+    $form['nodes']['#tree'] = TRUE;
+    // Create elements for the tablesort
+    foreach (array_filter($form_state['values']['nodes']) as $nid) {
+      $form['nodes'][$nid] = array(
+        'weight' => array(
+          '#type' => 'weight',
+          '#attributes' => array('class' => array('node-weight')),
+        ),
+      );
+    }
+    unset($form_state['values']['nodes']);
+    $form['#theme'] = 'scs_node_selection';
+
+    $form['actions']['submit'] = array(
+      '#type' => 'submit',
+      '#value' => t('Create newsletter'),
+    );
+  }
+
+  return $form;
+}
+
+function scs_node_selection_validate($form, &$form_state) {
+  if ($form_state['values']['op'] == t('Sort nodes')) {
+    $nodes = array_filter($form_state['values']['nodes']);
+    if (empty($nodes) && $form_state['values']['step'] == 1) {
+      form_set_error('nodes', t('You need to select at least one node.'));
+    }
+  }
+}
+
+function scs_node_selection_submit($form, &$form_state) {
+  if ($form_state['values']['step'] == 1) {
+    $form_state['rebuild'] = TRUE;
+    if ($form_state['values']['op'] == t('Sort nodes')) {
+      // Next step
+      $form_state['scs']['step'] = 2;
+    }
+  }
+  else {
+    $nodes = array_keys($form_state['values']['nodes']);
+
+    //TODO Type has to be fixed here
+    $type = 'simplenews';
+    _scs_create_newsletter($form_state['scs']['title'], $nodes, $form_state['scs']['toc'], $type);
+  }
 }

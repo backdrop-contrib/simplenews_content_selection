@@ -294,26 +294,26 @@ function scs_node_selection($form, &$form_state) {
         '#value' => $form_state['values']['newsletter_toc'],
       );
     }
-  }
 
-  $form['nodes']['#tree'] = TRUE;
-  // Create elements for the tablesort
-  foreach (array_filter($form_state['values']['nodes']) as $nid) {
-    $form['nodes'][$nid] = array(
-      'weight' => array(
-        '#type' => 'weight',
-        '#attributes' => array('class' => array('node-weight')),
-      ),
+
+    $form['nodes']['#tree'] = TRUE;
+    // Create elements for the tablesort
+    foreach (array_filter($form_state['values']['nodes']) as $nid) {
+      $form['nodes'][$nid] = array(
+        'weight' => array(
+          '#type' => 'weight',
+          '#attributes' => array('class' => array('node-weight')),
+        ),
+      );
+    }
+    unset($form_state['values']['nodes']);
+    $form['#theme'] = 'scs_node_selection';
+
+    $form['actions']['submit'] = array(
+      '#type' => 'submit',
+      '#value' => t('Create newsletter'),
     );
   }
-  unset($form_state['values']['nodes']);
-  $form['#theme'] = 'scs_node_selection';
-
-  $form['actions']['submit'] = array(
-    '#type' => 'submit',
-    '#value' => t('Create newsletter'),
-  );
-
 
   return $form;
 }

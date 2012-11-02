@@ -25,7 +25,7 @@ function scs_menu() {
     'page arguments' => array('scs_admin_settings_form'),
     'access arguments' => array('administer scs'),
     'file' => 'scs.admin.inc',
-    'type' => MENU_NORMAL_ITEM,
+    'type' => MENU_LOCAL_TASK,
   );
 
   $items['admin/content/scs_node_selection'] = array(

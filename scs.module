@@ -175,25 +175,12 @@ function scs_node_selection($form, &$form_state) {
   }
 
   if (!isset($form_state['scs'])) {
+    $form = _scs_get_metadata_form($form);
+
     // This is the first step of our two-step form
     $form['step'] = array(
       '#type' => 'hidden',
       '#value' => 1,
-    );
-
-    // Newsletter-related elements
-    $form['newsletter_title'] = array(
-      '#type' => 'textfield',
-      '#title' => t('Title'),
-      '#description' => t('Enter the title of this newsletter'),
-      '#default_value' => variable_get('scs_default_title', ''),
-      '#required' => TRUE,
-    );
-
-    $form['newsletter_toc'] = array(
-      '#type' => 'checkbox',
-      '#title' => t('Create a table of contents'),
-      '#description' => t('Create a table of contents at top of the newsletter with the titles of the selected nodes. If newsletter is HTML format, these table of contents will be bookmarks.'),
     );
 
     // Now begins the real content selection
@@ -285,14 +272,14 @@ function scs_node_selection($form, &$form_state) {
       '#type' => 'hidden',
       '#value' => 2,
     );
-    if (!empty($form_state['values']['newsletter_title']) && !empty($form_state['values']['newsletter_toc'])) {
-      $form['title'] = array(
+    if (!empty($form_state['values']['scs_title']) && !empty($form_state['values']['scs_toc'])) {
+      $form['scs_title'] = array(
         '#type' => 'hidden',
-        '#value' => $form_state['values']['newsletter_title'],
+        '#value' => $form_state['values']['scs_title'],
       );
-      $form['toc'] = array(
+      $form['scs_toc'] = array(
         '#type' => 'hidden',
-        '#value' => $form_state['values']['newsletter_toc'],
+        '#value' => $form_state['values']['scs_toc'],
       );
     }
 
@@ -315,6 +302,24 @@ function scs_node_selection($form, &$form_state) {
       '#value' => t('Create newsletter'),
     );
   }
+
+  return $form;
+}
+
+function _scs_get_metadata_form($form) { // Newsletter-related elements
+  $form['scs_title'] = array(
+    '#type' => 'textfield',
+    '#title' => t('Title'),
+    '#description' => t('Enter the title of this newsletter'),
+    '#default_value' => variable_get('scs_default_title', ''),
+    '#required' => TRUE,
+  );
+
+  $form['scs_toc'] = array(
+    '#type' => 'checkbox',
+    '#title' => t('Create a table of contents'),
+    '#description' => t('Create a table of contents at top of the newsletter with the titles of the selected nodes. If newsletter is HTML format, these table of contents will be bookmarks.'),
+  );
 
   return $form;
 }

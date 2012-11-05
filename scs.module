@@ -168,9 +168,10 @@ function _scs_create_newsletter($title, $nodes, $toc = 0, $type) {
 function scs_node_selection($form, &$form_state) {
   // Prevent the user from using this page if there is no content type
   // enabled for selection
-  if (!variable_get('scs_content_types', FALSE)) {
-    drupal_set_message(t('You need to enable some content types for selection in order to use this module. You can enable them in !link.', array('!link' => l(t('Simplenews Content Selection settings'), 'admin/config/simplenews/scs'))), 'error');
-    return "";
+  $types = array_filter(variable_get('scs_content_types', array()));
+  if (empty($types)) {
+    drupal_set_message(t('You need to enable some content types for selection in order to use this module. You can enable them in !link.', array('!link' => l(t('Simplenews Content Selection settings'), 'admin/config/services/simplenews/settings/scs'))), 'error');
+    return;
   }
 
   if (!isset($form_state['scs'])) {
@@ -216,7 +217,7 @@ function scs_node_selection($form, &$form_state) {
       '#description' => t('Filter on title, matching the first characters.'),
       '#default_value' => !empty($form_state['values']['title']) ? $form_state['values']['title'] : '',
     );
-    $types = array(t('None')) + drupal_map_assoc(array_filter(variable_get('scs_content_types', array())));
+    $types = array(t('None')) + drupal_map_assoc($types);
     $form['filters']['type'] = array(
       '#type' => 'select',
       '#title' => t('Type'),

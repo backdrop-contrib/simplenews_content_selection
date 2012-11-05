@@ -104,7 +104,7 @@ function scs_form_alter(&$form, &$form_state, $form_id) {
       unset($form['admin']);
       $form_state['scs'] = TRUE;
       $form += scs_node_selection($form, $form_state);
-      $form['#theme'] = 'scs_node_selection';
+      $form['#theme'] = 'scs_sortable_table';
       $form['#submit'][] = 'scs_node_selection_submit';
     }
   }

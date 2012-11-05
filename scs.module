@@ -171,7 +171,7 @@ function scs_node_selection($form, &$form_state) {
   $types = array_filter(variable_get('scs_content_types', array()));
   if (empty($types)) {
     drupal_set_message(t('You need to enable some content types for selection in order to use this module. You can enable them in !link.', array('!link' => l(t('Simplenews Content Selection settings'), 'admin/config/services/simplenews/settings/scs'))), 'error');
-    return;
+    return array();
   }
 
   if (!isset($form_state['scs'])) {

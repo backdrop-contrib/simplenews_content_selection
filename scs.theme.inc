@@ -23,7 +23,7 @@ function theme_scs_sortable_table($form) {
   }
   $output = theme('table', array('header' => $headers, 'rows' => $rows, 'attributes' => array('id' => 'scs-sort-nodes')));
   $info = '';
-  if(isset($form['scs_title']) && isset($form['scs_toc'])) {
+  if (isset($form['scs_title']) && isset($form['scs_toc'])) {
     $info = drupal_render($form['scs_title']) . drupal_render($form['scs_toc']);
   }
   $output = $info . $output . drupal_render_children($form);

@@ -145,7 +145,6 @@ function _scs_create_newsletter($title, $nodes, $toc = 0, $type) {
   $newsletter->body[LANGUAGE_NONE][0]['value'] = $body;
   //$newsletter->teaser['und']['summary'] = node_teaser($body);
   $newsletter->body[LANGUAGE_NONE][0]['summary'] = '';
-  $newsletter->body[LANGUAGE_NONE][0]['format'] = variable_get('filter_fallback_format', 1);
   $newsletter->status = variable_get('scs_publish_default', 1);
   $newsletter->revision = 1;
   $newsletter->promote = 0;

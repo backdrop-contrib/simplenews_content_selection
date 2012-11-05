@@ -8,25 +8,27 @@
 /**
  * Theme the node selection form
  */
-function theme_scs_node_selection(&$form) {
-  $form = &$form['form'];
-  if ($form['step']['#value'] == 2) {
-    $headers = array(t('Node title'), t('Weight'));
-    $rows = array();
-    foreach (element_children($form['nodes']) as $nid) {
-      $row = array();
-      $row[] = db_query('SELECT title FROM {node} WHERE nid = :nid', array(':nid' => $nid))->fetchField();
-      $row[] = drupal_render($form['nodes'][$nid]['weight']);
-      $rows[] = array(
-        'data' => $row,
-        'class' => array('draggable'),
-      );
-    }
-    $output = theme('table', array('header' => $headers, 'rows' => $rows, 'attributes' => array('id' => 'scs-sort-nodes')));
-    $output .= drupal_render_children($form);
-    drupal_add_tabledrag('scs-sort-nodes', 'order', 'sibling', 'node-weight');
-    return $output;
+function theme_scs_sortable_table($form) {
+  $form = $form['form'];
+  $headers = array(t('Node title'), t('Weight'));
+  $rows = array();
+  foreach (element_children($form['nodes']) as $nid) {
+    $row = array();
+    $row[] = db_query('SELECT title FROM {node} WHERE nid = :nid', array(':nid' => $nid))->fetchField();
+    $row[] = drupal_render($form['nodes'][$nid]['weight']);
+    $rows[] = array(
+      'data' => $row,
+      'class' => array('draggable'),
+    );
   }
+  $output = theme('table', array('header' => $headers, 'rows' => $rows, 'attributes' => array('id' => 'scs-sort-nodes')));
+  $info = '';
+  if(isset($form['scs_title']) && isset($form['scs_toc'])) {
+    $info = drupal_render($form['scs_title']) . drupal_render($form['scs_toc']);
+  }
+  $output = $info . $output . drupal_render_children($form);
+  drupal_add_tabledrag('scs-sort-nodes', 'order', 'sibling', 'node-weight');
+  return $output;
 }
 
 /**

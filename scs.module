@@ -33,7 +33,7 @@ function scs_menu() {
     'description' => 'Select nodes to create a newsletter',
     'page callback' => 'drupal_get_form',
     'page arguments' => array('scs_node_selection'),
-    'access arguments' => array('scs create newsletters'),
+    'access arguments' => array('scs create newsletter'),
     'type' => MENU_LOCAL_TASK,
   );
 

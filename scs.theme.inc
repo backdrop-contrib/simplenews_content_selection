@@ -12,9 +12,19 @@ function theme_scs_sortable_table($form) {
   $form = $form['form'];
   $headers = array(t('Node title'), t('Weight'));
   $rows = array();
-  foreach (element_children($form['nodes']) as $nid) {
+
+  $nids = element_children($form['nodes']);
+
+  // Fetch the titles for each nid
+  $titles = db_select('node', 'n')
+    ->fields('n', array('nid', 'title'))
+    ->condition('nid', array_values($nids))
+    ->execute()
+    ->fetchAllKeyed();
+
+  foreach ($nids as $nid) {
     $row = array();
-    $row[] = db_query('SELECT title FROM {node} WHERE nid = :nid', array(':nid' => $nid))->fetchField();
+    $row[] = $titles[$nid];
     $row[] = drupal_render($form['nodes'][$nid]['weight']);
     $rows[] = array(
       'data' => $row,

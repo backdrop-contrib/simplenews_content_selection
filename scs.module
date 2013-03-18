@@ -271,7 +271,7 @@ function scs_node_selection($form, &$form_state) {
       '#type' => 'hidden',
       '#value' => 2,
     );
-    if (!empty($form_state['values']['scs_title']) && !empty($form_state['values']['scs_toc'])) {
+    if (isset($form_state['values']['scs_title']) && isset($form_state['values']['scs_toc'])) {
       $form['scs_title'] = array(
         '#type' => 'hidden',
         '#value' => $form_state['values']['scs_title'],

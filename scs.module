@@ -46,13 +46,12 @@ function scs_theme() {
       'file' => 'scs.theme.inc',
     ),
     'scs_newsletter' => array(
-      'variables' => array('nodes' => NULL),
+      'variables' => array('nodes' => array(), 'toc' => FALSE),
       'template' => 'scs-newsletter',
       'file' => 'scs.theme.inc',
     ),
     'scs_toc' => array(
       'variables' => array('nodes' => array()),
-      'template' => 'scs-toc',
       'file' => 'scs.theme.inc',
     ),
   );
@@ -121,14 +120,11 @@ function scs_form_node_form_alter(&$form, &$form_state) {
     && $form_state['input']['op'] = t('Create newsletter')
       && isset($form_state['input']['nodes'])
   ) {
-    $complete_nodes = array();
     $nodes = node_load_multiple(array_keys($form_state['input']['nodes']));
-    foreach ($nodes as $node) {
-      $build = node_view($node, variable_get('scs_view_mode', 'scs'));
-      unset($build['#contextual_links']['node']);
-      $complete_nodes[] = drupal_render($build);
-    }
-    $form['body'][LANGUAGE_NONE][0]['#default_value'] = implode($complete_nodes);
+    $form['body'][LANGUAGE_NONE][0]['#default_value'] = theme('scs_newsletter', array(
+      'nodes' => $nodes,
+      'toc' => $form_state['input']['scs_toc']
+    ));
   }
 }
 

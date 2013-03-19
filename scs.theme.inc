@@ -2,11 +2,11 @@
 
 /**
  * @file
- * Select Drupal content to create a newsletter
+ * Theming preprocesses
  */
 
 /**
- * Theme the node selection form
+ * Theme the node selection form.
  */
 function theme_scs_sortable_table($form) {
   $form = $form['form'];
@@ -32,86 +32,36 @@ function theme_scs_sortable_table($form) {
 }
 
 /**
- * Each selected node goes true this function to create a nice body
+ * Preprocess for scs_newsletter.
  */
-function theme_scs_node_output($node) {
-  //TODO Fix a teaser of this node
-  $output = '';
-  $output = '<div id="node_' . $node['nid'] . '">';
-  $output .= '<h1>' . $node['title'] . '</h1>';
-  $output .= '<p>' . $node['body'][LANGUAGE_NONE][0]['value'] . '</p>';
-  $output .= '<p>' . l(t('Read more'), 'node/' . $node['nid']) . '</p>';
-  $output .= '</div>';
-
-  return $output;
-}
-
-/**
- * Theme the node sort form into a table
- */
-function theme_scs_sort_nodes($form) {
-  $form = $form['form'];
-  $headers = array(t('Node title'), t('Weight'));
-  $rows = array();
-
-  foreach ($form as $name => $field) {
-    if (preg_match('/^weight_/', $name)) {
-      $nid = explode('_', $name);
-      $nid = $nid[1];
-      $title = db_query('SELECT title FROM {node} WHERE nid = :nid', array(':nid' => $nid))->fetchField();
-      unset($form[$name]['#title']);
-
-      $row = array();
-      $row[] = $title;
-      $row[] = drupal_render($form[$name]);
-      $rows[] = array(
-        'data' => $row,
-        'class' => array('draggable'),
-      );
-    }
+function scs_preprocess_scs_newsletter(&$vars) {
+  // Add Table of Contents (if required)
+  if ($vars['toc']) {
+    $vars['toc'] = theme('scs_toc', array('nodes' => $vars['nodes']));
   }
 
-  return drupal_render($form['newsletter_title']) . drupal_render($form['newsletter_toc']) . drupal_render($form['newsletter_content_type']) . theme('table', array('header' => $headers, 'rows' => $rows, 'attributes' => array('id' => 'scs_node_sort_table'))) . drupal_render_children($form);
-}
+  // Render each node using the correct view mode
+  $view_mode = variable_get('scs_view_mode', 'scs');
+  foreach ($vars['nodes'] as $nid => $node) {
+    $build = node_view($node, $view_mode);
 
-/**
- * Theme function to add the titles of the selected nodes at top of the newsletter
- */
-function theme_scs_node_titles($variables) {
-  if (variable_get('scs_format', 'plain') == 'plain') {
-    return implode("\n", $variables['titles']);
-  }
-  else {
-    return '<div id="toc">' . theme('item_list', array('items' => $variables['titles'])) . '</div>';
+    // Strip out contextual links
+    unset($build['#contextual_links']['node']);
+
+    $vars['nodes'][$nid] = $build;
   }
 }
 
 /**
- * Theme a complete newsletter.
+ * Theme the Table of Contents.
  */
-function theme_scs_newsletter_output($variables) {
-  $body = '';
+function theme_scs_toc($vars) {
   $titles = array();
-
-  // Node information
-  foreach ($variables['nodes'] as $node) {
-    if ($variables['toc']) {
-      if (variable_get('scs_format', 'plain') == 'plain') {
-        $titles[] = $node->title;
-      }
-      else {
-        $titles[] = '<a href="#node_' . $node->nid . '">' . $node->title . '</a>';
-      }
-    }
-
-    $body .= theme('scs_node_output', (array) $node);
+  foreach ($vars['nodes'] as $node) {
+    $titles[] = $node->title;
   }
-
-  // ToC (if required)
-  if ($variables['toc']) {
-    $body = theme('scs_node_titles', array('titles' => $titles)) . $body;
-  }
-
-  // Complete newsletter body
-  return $body;
+  return theme('item_list', array(
+    'items' => $titles,
+    'title' => t('Table of Contents'),
+  ));
 }

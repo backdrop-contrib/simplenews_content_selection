@@ -123,7 +123,7 @@ function scs_form_node_form_alter(&$form, &$form_state) {
     $nodes = node_load_multiple(array_keys($form_state['input']['nodes']));
     $form['body'][LANGUAGE_NONE][0]['#default_value'] = theme('scs_newsletter', array(
       'nodes' => $nodes,
-      'toc' => $form_state['input']['scs_toc']
+      'toc' => empty($form_state['input']['scs_toc']) ? FALSE : TRUE,
     ));
   }
 }

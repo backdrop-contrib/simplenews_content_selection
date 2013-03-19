@@ -1,10 +1,6 @@
 name = Simplenews Content Selection
 description = Select Drupal content to create a newsletter
 core = 7.x
-version = 7.x-1.x-dev
 package = Mail
 dependencies[] = simplenews
 configure = admin/config/services/simplenews/settings/scs
-files[] = scs.module
-files[] = scs.admin.inc
-files[] = scs.theme.inc

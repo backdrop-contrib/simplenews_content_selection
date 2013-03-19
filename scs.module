@@ -2,14 +2,7 @@
 
 /**
  * @file
- * Select Drupal content to create a newsletter
- */
-
-/**
- * TODO
- * - Fix all the todo's
- * - Add language support
- * - Newsletter taxonomy integration
+ * General hooks and commonly-used functions
  */
 
 /**
@@ -28,15 +21,6 @@ function scs_menu() {
     'type' => MENU_LOCAL_TASK,
   );
 
-  $items['admin/content/scs_node_selection'] = array(
-    'title' => 'Create newsletter from content',
-    'description' => 'Select nodes to create a newsletter',
-    'page callback' => 'drupal_get_form',
-    'page arguments' => array('scs_node_selection'),
-    'access arguments' => array('scs create newsletter'),
-    'type' => MENU_LOCAL_TASK,
-  );
-
   return $items;
 }
 
@@ -47,11 +31,7 @@ function scs_permission() {
   return array(
     'administer scs' => array(
       'title' => t('Administer Simplenews Content Selection'),
-      'description' => t('User can perform administrative tasks like changing default title etc'),
-    ),
-    'scs create newsletter' => array(
-      'title' => t('Create newsletters with content selection'),
-      'description' => t('User can create newsletter with Simplenews Content Selection'),
+      'description' => t('User can perform administrative tasks like changing view mode and newsletter content type.'),
     ),
   );
 }
@@ -65,16 +45,14 @@ function scs_theme() {
       'render element' => 'form',
       'file' => 'scs.theme.inc',
     ),
-    'scs_node_output' => array(
-      'variables' => array('node' => NULL),
+    'scs_newsletter' => array(
+      'variables' => array('nodes' => NULL),
+      'template' => 'scs-newsletter',
       'file' => 'scs.theme.inc',
     ),
-    'scs_newsletter_output' => array(
-      'variables' => array('nodes' => NULL, 'toc' => FALSE),
-      'file' => 'scs.theme.inc',
-    ),
-    'scs_node_titles' => array(
-      'variables' => array('titles' => array()),
+    'scs_toc' => array(
+      'variables' => array('nodes' => array()),
+      'template' => 'scs-toc',
       'file' => 'scs.theme.inc',
     ),
   );
@@ -90,216 +68,85 @@ function scs_node_operations() {
       'callback' => NULL,
     ),
   );
+
   return $operations;
 }
 
 /**
- * Implements hook_form_alter()
- * Used to add an extra multistep operation to admin/content/node
+ * Implements hook_entity_info().
  */
-function scs_form_alter(&$form, &$form_state, $form_id) {
-  if ($form_id == 'node_admin_content') {
-    if (isset($form_state['values']['operation']) && $form_state['values']['operation'] == 'scs_create') {
-      unset($form['filter']);
-      unset($form['admin']);
-      $form_state['scs'] = TRUE;
-      $form += _scs_get_metadata_form($form);
-      $form += scs_node_selection($form, $form_state);
-      $form['#theme'] = 'scs_sortable_table';
-      $form['#submit'][] = 'scs_node_selection_submit';
-    }
+function scs_entity_info() {
+  $return = array(
+    'node' => array(
+      'view modes' => array(
+        'scs' => array(
+          'label' => t('Simplenews Content Selection'),
+          'custom settings' => TRUE,
+        ),
+      ),
+    ),
+  );
+
+  return $return;
+}
+
+/**
+ * Implements hook_form_FORM_ID_alter().
+ */
+function scs_form_node_admin_content_alter(&$form, &$form_state) {
+  // Add an extra multistep operation to admin/content/node
+  if (isset($form_state['values']['operation']) && $form_state['values']['operation'] == 'scs_create') {
+    unset($form['filter']);
+    unset($form['admin']);
+
+    drupal_set_title(t('Sort nodes'));
+
+    // Show the sorting form + ToC checkbox
+    $form = array_merge($form, scs_node_sort_form($form, $form_state));
+    $form['#submit'][] = 'scs_node_sort_submit';
+
+    // Redirect to the simplenews node form
+    $form['#action'] = url('node/add/' . variable_get('scs_node_type', 'simplenews'));
   }
 }
 
 /**
- * Newsletter creator function
+ * Implements hook_form_FORM_ID_alter().
  */
-function _scs_create_newsletter($title, $nodes, $toc = 0, $type) {
-  global $user;
-
-  //TODO Fix this
-  /*if ($custom_theme = variable_get('theme_default', FALSE)) {
-  	$theme = $custom_theme;
-  	drupal_theme_initialize();
-  }*/
-
-  //Title
-  if ($title == '') {
-    $title = variable_get('scs_default_title', t('Please edit the title of this newsletter'));
+function scs_form_node_form_alter(&$form, &$form_state) {
+  // Check that we are creating a newsletter and that we come from the
+  // admin/content/node
+  if (!empty($form['#node_edit_form'])
+    && in_array($form['type']['#value'], simplenews_get_content_types())
+    && $form_state['input']['op'] = t('Create newsletter')
+      && isset($form_state['input']['nodes'])
+  ) {
+    $complete_nodes = array();
+    $nodes = node_load_multiple(array_keys($form_state['input']['nodes']));
+    foreach ($nodes as $node) {
+      $build = node_view($node, variable_get('scs_view_mode', 'scs'));
+      unset($build['#contextual_links']['node']);
+      $complete_nodes[] = drupal_render($build);
+    }
+    $form['body'][LANGUAGE_NONE][0]['#default_value'] = implode($complete_nodes);
   }
-
-  // Load node information
-  foreach ($nodes as $node) {
-    $complete_nodes[] = node_load($node);
-  }
-
-  // Create the body of the newsletter
-  $body = theme('scs_newsletter_output', array('nodes' => $complete_nodes, 'toc' => $toc));
-
-  $newsletter = new StdClass();
-  //TODO Make this variable
-  $newsletter->type = 'simplenews';
-  $newsletter->uid = $user->uid;
-  $newsletter->language = LANGUAGE_NONE;
-  $newsletter->title = $title;
-  $newsletter->body[LANGUAGE_NONE][0]['value'] = $body;
-  //$newsletter->teaser['und']['summary'] = node_teaser($body);
-  $newsletter->body[LANGUAGE_NONE][0]['summary'] = '';
-  $newsletter->status = variable_get('scs_publish_default', 1);
-  $newsletter->revision = 1;
-  $newsletter->promote = 0;
-  $newsletter->comment = 0;
-  $newsletter->created = REQUEST_TIME;
-  $newsletter->changed = REQUEST_TIME;
-  $newsletter->simplenews['s_format'] = strtolower(variable_get('scs_format', 'plain'));
-  $newsletter->priority = 0;
-  $newsletter->receipt = 0;
-  $newsletter->field_simplenews_term[LANGUAGE_NONE][0]['tid'] = 1;
-
-  node_save($newsletter);
-
-  drupal_goto('node/' . $newsletter->nid . '/edit');
 }
 
 /**
- * Page callback: Node selection page also known as the first way
- * to use this module
+ * Form callback: second step of the selection form, sorting nodes
  */
-function scs_node_selection($form, &$form_state) {
-  // Prevent the user from using this page if there is no content type
-  // enabled for selection
-  $types = array_filter(variable_get('scs_content_types', array()));
-  if (empty($types)) {
-    drupal_set_message(t('You need to enable some content types for selection in order to use this module. You can enable them in !link.', array('!link' => l(t('Simplenews Content Selection settings'), 'admin/config/services/simplenews/settings/scs'))), 'error');
-    return array();
-  }
+function scs_node_sort_form($form, &$form_state) {
+  $nodes = array_filter($form_state['values']['nodes']);
 
-  if (!isset($form_state['scs'])) {
-    $form = _scs_get_metadata_form($form);
+  // Checkbox for Table of contents
+  $form['scs_toc'] = array(
+    '#type' => 'checkbox',
+    '#title' => t('Create a table of contents'),
+    '#description' => t('Create a table of contents at top of the newsletter with the titles of the selected nodes. If newsletter is HTML format, these table of contents will be bookmarks.'),
+  );
 
-    // This is the first step of our two-step form
-    $form['step'] = array(
-      '#type' => 'hidden',
-      '#value' => 1,
-    );
-
-    // Now begins the real content selection
-
-    // Filtering
-    $form['filters'] = array(
-      '#type' => 'fieldset',
-      '#title' => t('Filters'),
-      '#collapsible' => TRUE,
-      '#collapsed' => empty($filters) ? TRUE : FALSE,
-    );
-    $form['filters']['nid'] = array(
-      '#type' => 'textfield',
-      '#title' => t('Nid'),
-      '#description' => t('Filter on a single nid.'),
-      '#default_value' => !empty($form_state['values']['nid']) ? $form_state['values']['nid'] : '',
-    );
-    $form['filters']['title'] = array(
-      '#type' => 'textfield',
-      '#title' => t('Title'),
-      '#description' => t('Filter on title, matching the first characters.'),
-      '#default_value' => !empty($form_state['values']['title']) ? $form_state['values']['title'] : '',
-    );
-    $types = array(t('None')) + drupal_map_assoc($types);
-    $form['filters']['type'] = array(
-      '#type' => 'select',
-      '#title' => t('Type'),
-      '#options' => $types,
-      '#multiple' => TRUE,
-      '#default_value' => !empty($form_state['values']['type']) ? $form_state['values']['type'] : array_keys($types),
-    );
-    $form['filters']['filter'] = array(
-      '#type' => 'submit',
-      '#value' => t('Filter'),
-    );
-
-    // Table header
-    $header = array(
-      'title' => array('data' => t('Title'), 'field' => 'title', 'sort' => 'ASC'),
-      'type' => array('data' => t('Type'), 'field' => 'type'),
-      'created' => array('data' => t('Created'), 'field' => 'created'),
-    );
-
-    // Rows
-    $rows = array();
-    $query = db_select('node', 'n')
-      ->extend('TableSort')
-      ->fields('n', array('nid', 'title', 'type', 'created'))
-      ->orderByHeader($header);
-    if (!empty($form_state['input'])) {
-      if (!empty($form_state['input']['nid'])) {
-        $query->condition('nid', $form_state['values']['nid']);
-      }
-      if (!empty($form_state['input']['title'])) {
-        $query->condition('title', $form_state['input']['nid'] . '%', 'LIKE');
-      }
-    }
-    if (!empty($form_state['input']['type'])) {
-      $query->condition('type', $form_state['input']['type']);
-    }
-    else {
-      $query->condition('type', array_keys($types));
-    }
-    $results = $query->execute();
-
-    foreach ($results as $node) {
-      $rows[$node->nid] = array(
-        'title' => l($node->title, 'node/' . $node->nid . '/edit'),
-        'type' => $node->type,
-        'created' => format_date($node->created),
-      );
-    }
-    $form['nodes'] = array(
-      '#type' => 'tableselect',
-      '#header' => $header,
-      '#options' => $rows,
-      '#empty' => t('No nodes found'),
-    );
-
-    // Submit button
-    $form['submit'] = array(
-      '#type' => 'submit',
-      '#value' => t('Sort nodes'),
-    );
-  }
-  else {
-    $form['step'] = array(
-      '#type' => 'hidden',
-      '#value' => 2,
-    );
-    if (isset($form_state['values']['scs_title']) && isset($form_state['values']['scs_toc'])) {
-      $form['scs_title'] = array(
-        '#type' => 'hidden',
-        '#value' => $form_state['values']['scs_title'],
-      );
-      $form['scs_toc'] = array(
-        '#type' => 'hidden',
-        '#value' => $form_state['values']['scs_toc'],
-      );
-    }
-
-    $nodes = array_filter($form_state['values']['nodes']);
-    $form = array_merge($form, _scs_get_sorting_form($form, $nodes));
-    unset($form_state['values']['nodes']);
-
-    $form['#theme'] = 'scs_sortable_table';
-
-    $form['actions']['submit'] = array(
-      '#type' => 'submit',
-      '#value' => t('Create newsletter'),
-    );
-  }
-
-  return $form;
-}
-
-function _scs_get_sorting_form($form, $nodes) {
-  $form['nodes']['#tree'] = TRUE;
   // Create elements for the tablesort
+  $form['nodes']['#tree'] = TRUE;
   foreach ($nodes as $nid) {
     $form['nodes'][$nid] = array(
       'weight' => array(
@@ -308,62 +155,19 @@ function _scs_get_sorting_form($form, $nodes) {
       ),
     );
   }
-  $form['#theme'] = 'scs_node_selection';
-  return $form;
-}
+  $form['#theme'] = 'scs_sortable_table';
 
-function _scs_get_metadata_form($form) { // Newsletter-related elements
-  $form['scs_title'] = array(
-    '#type' => 'textfield',
-    '#title' => t('Title'),
-    '#description' => t('Enter the title of this newsletter'),
-    '#default_value' => variable_get('scs_default_title', ''),
-    '#required' => TRUE,
-  );
-
-  $form['scs_toc'] = array(
-    '#type' => 'checkbox',
-    '#title' => t('Create a table of contents'),
-    '#description' => t('Create a table of contents at top of the newsletter with the titles of the selected nodes. If newsletter is HTML format, these table of contents will be bookmarks.'),
+  $form['actions']['submit'] = array(
+    '#type' => 'submit',
+    '#value' => t('Create newsletter'),
   );
 
   return $form;
-}
-
-function scs_node_selection_validate($form, &$form_state) {
-  if ($form_state['values']['op'] == t('Sort nodes')) {
-    $nodes = array_filter($form_state['values']['nodes']);
-    if (empty($nodes) && $form_state['values']['step'] == 1) {
-      form_set_error('nodes', t('You need to select at least one node.'));
-    }
-  }
-}
-
-function scs_node_selection_submit($form, &$form_state) {
-  if ($form_state['values']['step'] == 1) {
-    $form_state['rebuild'] = TRUE;
-    if ($form_state['values']['op'] == t('Sort nodes')) {
-      // Next step
-      $form_state['scs']['step'] = 2;
-    }
-  }
-  else {
-    _scs_nodes_submit($form_state);
-  }
 }
 
 /**
- * Helper function: submit handler
- *
- * @param $form_state
+ * Form callback: submit handler for sorting nodes
  */
-function _scs_nodes_submit($form_state) {
+function scs_node_sort_submit(&$form, &$form_state) {
   uasort($form_state['values']['nodes'], 'drupal_sort_weight');
-
-  $title = !empty($form_state['values']['scs_title']) ? $form_state['values']['scs_title'] : variable_get('scs_default_title', '');
-  $toc = !empty($form_state['values']['scs_toc']) ? $form_state['values']['scs_toc'] : 0;
-
-  //TODO Type has to be fixed here
-  $type = 'simplenews';
-  _scs_create_newsletter($title, array_keys($form_state['values']['nodes']), $toc, $type);
 }

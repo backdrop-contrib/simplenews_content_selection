@@ -1,9 +1,9 @@
 <div id="newsletter">
-  <div id="toc">
-    <?php if ($toc): ?>
+  <?php if ($toc): ?>
+    <div id="toc">
       <?php echo $toc; ?>
-    <?php endif; ?>
-  </div>
+    </div>
+  <?php endif; ?>
   <?php foreach ($nodes as $node): ?>
     <?php echo render($node) ?>
   <?php endforeach; ?>

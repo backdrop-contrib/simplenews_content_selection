@@ -46,7 +46,10 @@ function scs_views_create_newsletter_action_submit($form, $form_state) {
  */
 function scs_views_form_views_form_content_page_alter(&$form, &$form_state, $form_id) {
   if ($form_state['step'] == 'views_bulk_operations_config_form') {
-    // Hack into VBO process to redirect to the simplenews node form
-    $form['#action'] = url('node/add/' . variable_get('scs_node_type', 'simplenews'));
+    $operation = $form_state['operation'];
+    if ($operation->id() == 'action::scs_views_create_newsletter_action') {
+      // Hack into VBO process to redirect to the simplenews node form
+      $form['#action'] = url('node/add/' . variable_get('scs_node_type', 'simplenews'));
+    }
   }
 }

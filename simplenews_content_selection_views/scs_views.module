@@ -53,3 +53,12 @@ function scs_views_form_views_form_content_page_alter(&$form, &$form_state, $for
     }
   }
 }
+
+/**
+ * Implements hook_views_api().
+ */
+function scs_views_views_api() {
+  return array(
+    'api' => 3,
+  );
+}

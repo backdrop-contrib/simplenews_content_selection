@@ -121,6 +121,9 @@ function scs_form_node_form_alter(&$form, &$form_state) {
       && isset($form_state['input']['nodes'])
   ) {
     $nodes = node_load_multiple(array_keys($form_state['input']['nodes']));
+    foreach($nodes as $node) {
+      $node->scs_view_mode = $form_state['input']['nodes'][$node->nid]['view_mode'];
+    }
     $form['body'][LANGUAGE_NONE][0]['#default_value'] = theme('scs_newsletter', array(
       'nodes' => $nodes,
       'toc' => empty($form_state['input']['scs_toc']) ? FALSE : TRUE,
@@ -144,11 +147,14 @@ function scs_node_sort_form($form, &$form_state) {
   // Create elements for the tablesort
   $form['nodes']['#tree'] = TRUE;
   foreach ($nodes as $nid) {
-    $form['nodes'][$nid] = array(
-      'weight' => array(
-        '#type' => 'weight',
-        '#attributes' => array('class' => array('node-weight')),
-      ),
+    $form['nodes'][$nid]['weight'] = array(
+      '#type' => 'weight',
+      '#attributes' => array('class' => array('node-weight')),
+    );
+
+    $form['nodes'][$nid]['view_mode'] = array(
+      '#type' => 'select',
+       '#options' => scs_view_mode_options(),
     );
   }
   $form['#theme'] = 'scs_sortable_table';
@@ -166,4 +172,20 @@ function scs_node_sort_form($form, &$form_state) {
  */
 function scs_node_sort_submit(&$form, &$form_state) {
   uasort($form_state['values']['nodes'], 'drupal_sort_weight');
+}
+
+/**
+ * Put together a option list based on selected view modes
+ */
+function scs_view_mode_options() {
+  $entity_info = entity_get_info();
+  $view_modes = array('default' => t('Default'));
+
+  $options = array();
+  foreach (variable_get('scs_view_mode', array('scs')) as $machine_name => $status) {
+    if($status) {
+      $options[$machine_name] = $entity_info['node']['view modes'][$machine_name]['label'];
+    }
+  }
+  return $options;
 }

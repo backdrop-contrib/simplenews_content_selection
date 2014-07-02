@@ -19,11 +19,11 @@ function scs_admin_settings_form() {
   }
 
   $form['scs_view_mode'] = array(
-    '#type' => 'select',
+    '#type' => 'checkboxes',
     '#title' => t('View mode'),
     '#description' => t('Select the view mode to use when rendering the newsletter, default is the one provided by SCS, that you can customize in the Field UI.'),
     '#options' => $view_modes,
-    '#default_value' => variable_get('scs_view_mode', 'scs'),
+    '#default_value' => variable_get('scs_view_mode', array('scs')),
   );
 
   // Node type

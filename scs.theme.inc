@@ -45,7 +45,7 @@ function theme_scs_sortable_table($form) {
 /**
  * Preprocess for scs_newsletter.
  */
-function scs_preprocess_scs_newsletter(&$vars) {
+function template_preprocess_scs_newsletter(&$vars) {
   // Add Table of Contents (if required)
   if ($vars['toc']) {
     $vars['toc'] = theme('scs_toc', array('nodes' => $vars['nodes']));

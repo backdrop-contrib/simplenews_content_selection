@@ -234,7 +234,7 @@ function scs_views_views_default_views() {
   $handler = $view->new_display('page', 'Page', 'page');
   $handler->display->display_options['path'] = 'admin/content/newsletter-creation';
   $handler->display->display_options['menu']['type'] = 'tab';
-  $handler->display->display_options['menu']['title'] = 'Newletter creation';
+  $handler->display->display_options['menu']['title'] = 'Newsletter creation';
   $handler->display->display_options['menu']['description'] = 'Create a newsletter form content';
   $handler->display->display_options['menu']['weight'] = '0';
   $handler->display->display_options['menu']['context'] = 0;

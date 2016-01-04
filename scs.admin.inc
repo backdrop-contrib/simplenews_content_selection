@@ -27,13 +27,14 @@ function scs_admin_settings_form() {
   );
 
   // Node type
-  $types = simplenews_get_content_types();
+  $types = drupal_map_assoc(simplenews_get_content_types());
   if (count($types) > 1) {
+    $type_names = node_type_get_names();
     $form['scs_node_type'] = array(
       '#type' => 'select',
       '#title' => t('Newsletter type'),
       '#description' => t('You have defined multiple content types for newsletters, check the one you want to use with SCS.'),
-      '#options' => drupal_map_assoc($types),
+      '#options' => array_intersect_key($type_names, $types),
       '#default_value' => variable_get('scs_node_type', 'simplenews'),
     );
   }

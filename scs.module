@@ -105,7 +105,8 @@ function scs_form_node_admin_content_alter(&$form, &$form_state) {
     $form['#submit'][] = 'scs_node_sort_submit';
 
     // Redirect to the simplenews node form
-    $form['#action'] = url('node/add/' . variable_get('scs_node_type', 'simplenews'));
+    $type = strtr(variable_get('scs_node_type', 'simplenews'), '_', '-');
+    $form['#action'] = url('node/add/' . $type);
   }
 }
 

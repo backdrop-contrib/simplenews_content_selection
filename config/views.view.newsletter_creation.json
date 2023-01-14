@@ -1,0 +1,505 @@
+{
+    "_config_name": "views.view.newsletter_creation",
+    "name": "newsletter_creation",
+    "description": "",
+    "tag": "default",
+    "disabled": false,
+    "base_table": "node",
+    "human_name": "Newsletter creation",
+    "core": "1.23.1",
+    "display": {
+        "default": {
+            "display_title": "Master",
+            "display_plugin": "default",
+            "display_options": {
+                "query": {
+                    "type": "views_query",
+                    "options": []
+                },
+                "access": {
+                    "type": "perm",
+                    "perm": "send newsletter"
+                },
+                "cache": {
+                    "type": "none"
+                },
+                "exposed_form": {
+                    "type": "basic"
+                },
+                "pager": {
+                    "type": "full",
+                    "options": {
+                        "items_per_page": "50"
+                    }
+                },
+                "style_plugin": "table",
+                "row_plugin": "fields",
+                "fields": {
+                    "views_bulk_operations": {
+                        "id": "views_bulk_operations",
+                        "table": "views_entity_node",
+                        "field": "views_bulk_operations",
+                        "relationship": "none",
+                        "group_type": "group",
+                        "ui_name": "",
+                        "label": "Content",
+                        "exclude": 0,
+                        "alter": {
+                            "alter_text": 0,
+                            "text": "",
+                            "make_link": 0,
+                            "path": "",
+                            "absolute": 0,
+                            "external": 0,
+                            "replace_spaces": 0,
+                            "path_case": "none",
+                            "trim_whitespace": 0,
+                            "alt": "",
+                            "rel": "",
+                            "link_class": "",
+                            "prefix": "",
+                            "suffix": "",
+                            "target": "",
+                            "nl2br": 0,
+                            "max_length": "",
+                            "word_boundary": 1,
+                            "ellipsis": 1,
+                            "more_link": 0,
+                            "more_link_text": "",
+                            "more_link_path": "",
+                            "strip_tags": 0,
+                            "trim": 0,
+                            "preserve_tags": "",
+                            "html": 0
+                        },
+                        "element_type": "",
+                        "element_class": "",
+                        "element_label_type": "",
+                        "element_label_class": "",
+                        "element_label_colon": 1,
+                        "element_wrapper_type": "",
+                        "element_wrapper_class": "",
+                        "element_default_classes": 1,
+                        "empty": "",
+                        "hide_empty": 0,
+                        "empty_zero": 0,
+                        "hide_alter_empty": 1,
+                        "vbo_settings": {
+                            "display_type": "1",
+                            "enable_select_all_pages": 1,
+                            "row_clickable": 1,
+                            "force_single": 0,
+                            "entity_load_capacity": "10",
+                            "skip_batching": 0,
+                            "save_view_object_when_batching": 0
+                        },
+                        "vbo_operations": {
+                            "action::views_bulk_operations_change_owner_vboaction": {
+                                "selected": 0,
+                                "postpone_processing": 0,
+                                "skip_confirmation": 0,
+                                "skip_permission_check": 0,
+                                "override_label": 0,
+                                "label": ""
+                            },
+                            "action::scs_create_newsletter_action": {
+                                "selected": 1,
+                                "postpone_processing": 0,
+                                "skip_confirmation": 0,
+                                "skip_permission_check": 0,
+                                "override_label": 0,
+                                "label": ""
+                            },
+                            "action::node_delete_action": {
+                                "selected": 0,
+                                "postpone_processing": false,
+                                "skip_confirmation": true,
+                                "skip_permission_check": false,
+                                "override_label": 0,
+                                "label": ""
+                            },
+                            "action::views_bulk_operations_delete_item_vboaction": {
+                                "selected": 0,
+                                "postpone_processing": 0,
+                                "skip_confirmation": 0,
+                                "skip_permission_check": 0,
+                                "override_label": 0,
+                                "label": "",
+                                "settings": {
+                                    "log": 0
+                                }
+                            },
+                            "action::views_bulk_operations_delete_revision_vboaction": {
+                                "selected": 0,
+                                "postpone_processing": 0,
+                                "skip_confirmation": 0,
+                                "skip_permission_check": 0,
+                                "override_label": 0,
+                                "label": ""
+                            },
+                            "action::views_bulk_operations_display_message_vboaction": {
+                                "selected": 0,
+                                "postpone_processing": 0,
+                                "skip_confirmation": 0,
+                                "skip_permission_check": 0,
+                                "override_label": 0,
+                                "label": ""
+                            },
+                            "action::views_bulk_operations_script_vboaction": {
+                                "selected": 0,
+                                "postpone_processing": 0,
+                                "skip_confirmation": 0,
+                                "skip_permission_check": 0,
+                                "override_label": 0,
+                                "label": ""
+                            },
+                            "action::node_make_sticky_action": {
+                                "selected": 0,
+                                "postpone_processing": false,
+                                "skip_confirmation": true,
+                                "skip_permission_check": false,
+                                "override_label": 0,
+                                "label": ""
+                            },
+                            "action::node_make_unsticky_action": {
+                                "selected": 0,
+                                "postpone_processing": false,
+                                "skip_confirmation": true,
+                                "skip_permission_check": false,
+                                "override_label": 0,
+                                "label": ""
+                            },
+                            "action::views_bulk_operations_modify_vboaction": {
+                                "selected": 0,
+                                "postpone_processing": 0,
+                                "skip_confirmation": 0,
+                                "skip_permission_check": 0,
+                                "override_label": 0,
+                                "label": "",
+                                "settings": {
+                                    "show_all_tokens": 1,
+                                    "display_values": {
+                                        "_all_": "_all_"
+                                    }
+                                }
+                            },
+                            "action::views_bulk_operations_argument_selector_vboaction": {
+                                "selected": 0,
+                                "skip_confirmation": 0,
+                                "skip_permission_check": 0,
+                                "override_label": 0,
+                                "label": "",
+                                "settings": {
+                                    "url": ""
+                                }
+                            },
+                            "action::node_promote_action": {
+                                "selected": 0,
+                                "postpone_processing": false,
+                                "skip_confirmation": true,
+                                "skip_permission_check": false,
+                                "override_label": 0,
+                                "label": ""
+                            },
+                            "action::node_publish_action": {
+                                "selected": 0,
+                                "postpone_processing": false,
+                                "skip_confirmation": true,
+                                "skip_permission_check": false,
+                                "override_label": 0,
+                                "label": ""
+                            },
+                            "action::views_bulk_operations_goto_vboaction": {
+                                "selected": 0,
+                                "skip_confirmation": 0,
+                                "skip_permission_check": 0,
+                                "override_label": 0,
+                                "label": ""
+                            },
+                            "action::node_unpromote_action": {
+                                "selected": 0,
+                                "postpone_processing": false,
+                                "skip_confirmation": true,
+                                "skip_permission_check": false,
+                                "override_label": 0,
+                                "label": ""
+                            },
+                            "action::views_bulk_operations_send_email_vboaction": {
+                                "selected": 0,
+                                "postpone_processing": 0,
+                                "skip_confirmation": 0,
+                                "skip_permission_check": 0,
+                                "override_label": 0,
+                                "label": ""
+                            },
+                            "action::node_unpublish_action": {
+                                "selected": 0,
+                                "postpone_processing": false,
+                                "skip_confirmation": true,
+                                "skip_permission_check": false,
+                                "override_label": 0,
+                                "label": ""
+                            },
+                            "action::views_bulk_operations_node_unpublish_by_keyword_vboaction": {
+                                "selected": 0,
+                                "postpone_processing": 0,
+                                "skip_confirmation": 0,
+                                "skip_permission_check": 0,
+                                "override_label": 0,
+                                "label": ""
+                            },
+                            "action::path_node_update_action": {
+                                "selected": 0,
+                                "postpone_processing": false,
+                                "skip_confirmation": true,
+                                "skip_permission_check": false,
+                                "override_label": 0,
+                                "label": ""
+                            }
+                        }
+                    },
+                    "title": {
+                        "id": "title",
+                        "table": "node",
+                        "field": "title",
+                        "relationship": "none",
+                        "group_type": "group",
+                        "ui_name": "",
+                        "label": "Title",
+                        "exclude": 0,
+                        "alter": {
+                            "alter_text": 0,
+                            "text": "",
+                            "make_link": 0,
+                            "path": "",
+                            "absolute": 0,
+                            "external": 0,
+                            "replace_spaces": 0,
+                            "path_case": "none",
+                            "trim_whitespace": 0,
+                            "alt": "",
+                            "rel": "",
+                            "link_class": "",
+                            "prefix": "",
+                            "suffix": "",
+                            "target": "",
+                            "nl2br": 0,
+                            "max_length": "",
+                            "word_boundary": 0,
+                            "ellipsis": 0,
+                            "more_link": 0,
+                            "more_link_text": "",
+                            "more_link_path": "",
+                            "strip_tags": 0,
+                            "trim": 0,
+                            "preserve_tags": "",
+                            "html": 0
+                        },
+                        "element_type": "",
+                        "element_class": "",
+                        "element_label_type": "",
+                        "element_label_class": "",
+                        "element_label_colon": 1,
+                        "element_wrapper_type": "",
+                        "element_wrapper_class": "",
+                        "element_default_classes": 1,
+                        "empty": "",
+                        "hide_empty": 0,
+                        "empty_zero": 0,
+                        "hide_alter_empty": 1,
+                        "link_to_node": 0
+                    },
+                    "type": {
+                        "id": "type",
+                        "table": "node",
+                        "field": "type",
+                        "relationship": "none",
+                        "group_type": "group",
+                        "ui_name": "",
+                        "label": "Type",
+                        "exclude": 0,
+                        "alter": {
+                            "alter_text": 0,
+                            "text": "",
+                            "make_link": 0,
+                            "path": "",
+                            "absolute": 0,
+                            "external": 0,
+                            "replace_spaces": 0,
+                            "path_case": "none",
+                            "trim_whitespace": 0,
+                            "alt": "",
+                            "rel": "",
+                            "link_class": "",
+                            "prefix": "",
+                            "suffix": "",
+                            "target": "",
+                            "nl2br": 0,
+                            "max_length": "",
+                            "word_boundary": 1,
+                            "ellipsis": 1,
+                            "more_link": 0,
+                            "more_link_text": "",
+                            "more_link_path": "",
+                            "strip_tags": 0,
+                            "trim": 0,
+                            "preserve_tags": "",
+                            "html": 0
+                        },
+                        "element_type": "",
+                        "element_class": "",
+                        "element_label_type": "",
+                        "element_label_class": "",
+                        "element_label_colon": 1,
+                        "element_wrapper_type": "",
+                        "element_wrapper_class": "",
+                        "element_default_classes": 1,
+                        "empty": "",
+                        "hide_empty": 0,
+                        "empty_zero": 0,
+                        "hide_alter_empty": 1,
+                        "link_to_node": 0,
+                        "machine_name": 0
+                    },
+                    "created": {
+                        "id": "created",
+                        "table": "node",
+                        "field": "created",
+                        "relationship": "none",
+                        "group_type": "group",
+                        "ui_name": "",
+                        "label": "Post date",
+                        "exclude": 0,
+                        "alter": {
+                            "alter_text": 0,
+                            "text": "",
+                            "make_link": 0,
+                            "path": "",
+                            "absolute": 0,
+                            "external": 0,
+                            "replace_spaces": 0,
+                            "path_case": "none",
+                            "trim_whitespace": 0,
+                            "alt": "",
+                            "rel": "",
+                            "link_class": "",
+                            "prefix": "",
+                            "suffix": "",
+                            "target": "",
+                            "nl2br": 0,
+                            "max_length": "",
+                            "word_boundary": 1,
+                            "ellipsis": 1,
+                            "more_link": 0,
+                            "more_link_text": "",
+                            "more_link_path": "",
+                            "strip_tags": 0,
+                            "trim": 0,
+                            "preserve_tags": "",
+                            "html": 0
+                        },
+                        "element_type": "",
+                        "element_class": "",
+                        "element_label_type": "",
+                        "element_label_class": "",
+                        "element_label_colon": 1,
+                        "element_wrapper_type": "",
+                        "element_wrapper_class": "",
+                        "element_default_classes": 1,
+                        "empty": "",
+                        "hide_empty": 0,
+                        "empty_zero": 0,
+                        "hide_alter_empty": 1,
+                        "date_format": "short",
+                        "custom_date_format": "",
+                        "timezone": ""
+                    }
+                },
+                "filters": {
+                    "status": {
+                        "value": 1,
+                        "table": "node",
+                        "field": "status",
+                        "id": "status",
+                        "expose": {
+                            "operator": false
+                        },
+                        "group": 1
+                    },
+                    "type": {
+                        "id": "type",
+                        "table": "node",
+                        "field": "type",
+                        "relationship": "none",
+                        "group_type": "group",
+                        "ui_name": "",
+                        "operator": "in",
+                        "value": [],
+                        "group": "1",
+                        "exposed": true,
+                        "expose": {
+                            "operator_id": "type_op",
+                            "label": "Type",
+                            "description": "",
+                            "use_operator": 0,
+                            "operator": "type_op",
+                            "identifier": "type",
+                            "required": 0,
+                            "remember": 0,
+                            "multiple": 0,
+                            "remember_roles": {
+                                "authenticated": "authenticated",
+                                "anonymous": 0,
+                                "editor": 0,
+                                "administrator": 0
+                            },
+                            "reduce": 0
+                        },
+                        "is_grouped": false,
+                        "group_info": {
+                            "label": "",
+                            "description": "",
+                            "identifier": "",
+                            "optional": true,
+                            "widget": "select",
+                            "multiple": false,
+                            "remember": 0,
+                            "default_group": "All",
+                            "default_group_multiple": [],
+                            "group_items": []
+                        }
+                    }
+                },
+                "sorts": {
+                    "created": {
+                        "id": "created",
+                        "table": "node",
+                        "field": "created",
+                        "order": "DESC"
+                    }
+                },
+                "title": "Newsletter creation"
+            }
+        },
+        "page": {
+            "display_title": "Page",
+            "display_plugin": "page",
+            "display_options": {
+                "query": {
+                    "type": "views_query",
+                    "options": []
+                },
+                "path": "admin/content/newsletter-creation",
+                "menu": {
+                    "type": "tab",
+                    "title": "Newsletter creation",
+                    "description": "Create a newsletter form content",
+                    "name": "main-menu",
+                    "weight": "0",
+                    "context": 0,
+                    "context_only_inline": 0
+                }
+            }
+        }
+    }
+}

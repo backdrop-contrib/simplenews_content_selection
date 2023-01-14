@@ -2,9 +2,6 @@
 Simplenews Content Selection
 ====
 
-About
---------------------------------------------------------------------------------
-
 Simplenews Content Selection allows you to select already created content to
 assemble in the body of a newsletter (provided by the Simplenews module)
 content type. 

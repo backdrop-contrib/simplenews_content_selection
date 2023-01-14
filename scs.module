@@ -63,7 +63,7 @@ function scs_theme() {
 function scs_entity_info_alter(&$info) {
   $info['node']['view modes']['scs'] = array(
     'label' => t('Simplenews Content Selection'),
-    'custom settings' => TRUE,
+    'custom settings' => FALSE,
   );
 }
 

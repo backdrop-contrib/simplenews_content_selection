@@ -9,7 +9,9 @@
  * Form callback: admin settings form
  */
 function scs_admin_settings_form() {
+  $config = config('scs.settings');
   $form = array();
+  $form['#config'] = 'scs.settings';
 
   // View mode
   $entity_info = entity_get_info();
@@ -23,11 +25,11 @@ function scs_admin_settings_form() {
     '#title' => t('View mode'),
     '#description' => t('Select the view mode to use when rendering the newsletter, default is the one provided by SCS, that you can customize in the Field UI.'),
     '#options' => $view_modes,
-    '#default_value' => variable_get('scs_view_mode', array('scs')),
+    '#default_value' => $config->get('scs_view_mode'),
   );
 
   // Node type
-  $types = drupal_map_assoc(simplenews_get_content_types());
+  $types = backdrop_map_assoc(simplenews_get_content_types());
   if (count($types) > 1) {
     $type_names = node_type_get_names();
     $form['scs_node_type'] = array(
@@ -35,7 +37,7 @@ function scs_admin_settings_form() {
       '#title' => t('Newsletter type'),
       '#description' => t('You have defined multiple content types for newsletters, check the one you want to use with SCS.'),
       '#options' => array_intersect_key($type_names, $types),
-      '#default_value' => variable_get('scs_node_type', 'simplenews'),
+      '#default_value' => $config->get('scs_node_type'),
     );
   }
   else {

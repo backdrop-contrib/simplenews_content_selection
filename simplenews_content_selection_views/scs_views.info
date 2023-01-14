@@ -1,6 +1,7 @@
 name = Simplenews Content Selection Views Integration
 description = Integrate Simplenews Content Selection with Views and Views Bulk Operations
-core = 7.x
+backdrop = 1.x
+type = module
 package = Mail
 dependencies[] = views_bulk_operations
 dependencies[] = scs

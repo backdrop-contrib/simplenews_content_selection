@@ -6,7 +6,7 @@
  */
 
 /**
- * Implementation of hook_action_info().
+ * Implements hook_action_info().
  */
 function scs_views_action_info() {
   return array(
@@ -26,7 +26,7 @@ function scs_views_create_newsletter_action_form($context, $form_state) {
   // Emulate the nodes submitted from admin/content/node
   $form_state['values']['nodes'] = $form_state['selection'];
 
-  drupal_set_title(t('Sort nodes'));
+  backdrop_set_title(t('Sort nodes'));
 
   $form = array(
     '#submit' => array('scs_node_sort_submit'),
@@ -49,6 +49,7 @@ function scs_views_form_alter(&$form, &$form_state) {
     $operation = $form_state['operation'];
     if ($operation->id() == 'action::scs_views_create_newsletter_action') {
       // Hack into VBO process to redirect to the simplenews node form
+      // TODO This variable was probably removed in Backdrop without replacement.
       $form['#action'] = url('node/add/' . variable_get('scs_node_type', 'simplenews'));
     }
   }

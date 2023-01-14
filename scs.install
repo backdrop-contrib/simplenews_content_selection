@@ -6,18 +6,21 @@
  */
 
 /**
- * Implements hook_uninstall().
+ * Implements hook_update_last_removed().
  */
-function scs_uninstall() {
-  // Delete created variables
-  variable_del('scs_view_mode');
-  variable_del('scs_node_type');
+function scs_update_last_removed() {
+  return 7000;
 }
 
 /**
- * Update variable to array setting to allow multiple selections
+ * Migrate scs variables to config.
  */
-function scs_update_7000() {
-  $old_var = variable_get('scs_view_mode', 'scs');
-  variable_set('scs_view_mode', array($old_var));
+function scs_update_1000() {
+  $config = config('scs.settings');
+  $config->set('scs_view_mode', update_variable_get('scs_view_mode', 'scs'));
+  $config->set('scs_node_type', update_variable_get('scs_node_type', 'simplenews'));
+  $config->save();
+
+  update_variable_del('scs_view_mode');
+  update_variable_del('scs_node_type');
 }

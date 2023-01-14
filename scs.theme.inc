@@ -25,8 +25,8 @@ function theme_scs_sortable_table($form) {
   foreach ($nids as $nid) {
     $row = array();
     $row[] = $titles[$nid];
-    $row[] = drupal_render($form['nodes'][$nid]['weight']);
-    $row[] = drupal_render($form['nodes'][$nid]['view_mode']);
+    $row[] = backdrop_render($form['nodes'][$nid]['weight']);
+    $row[] = backdrop_render($form['nodes'][$nid]['view_mode']);
     $rows[] = array(
       'data' => $row,
       'class' => array('draggable'),
@@ -35,10 +35,10 @@ function theme_scs_sortable_table($form) {
   $output = theme('table', array('header' => $headers, 'rows' => $rows, 'attributes' => array('id' => 'scs-sort-nodes')));
   $info = '';
   if (isset($form['scs_title']) && isset($form['scs_toc'])) {
-    $info = drupal_render($form['scs_title']) . drupal_render($form['scs_toc']);
+    $info = backdrop_render($form['scs_title']) . backdrop_render($form['scs_toc']);
   }
-  $output = $info . $output . drupal_render_children($form);
-  drupal_add_tabledrag('scs-sort-nodes', 'order', 'sibling', 'node-weight');
+  $output = $info . $output . backdrop_render_children($form);
+  backdrop_add_tabledrag('scs-sort-nodes', 'order', 'sibling', 'node-weight');
   return $output;
 }
 

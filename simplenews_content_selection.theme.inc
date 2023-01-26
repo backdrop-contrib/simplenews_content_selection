@@ -8,7 +8,7 @@
 /**
  * Theme the node selection form.
  */
-function theme_scs_sortable_table($form) {
+function theme_simplenews_content_selection_sortable_table($form) {
   $form = $form['form'];
   $headers = array(t('Node title'), t('Weight'), t('View mode'));
   $rows = array();
@@ -32,28 +32,28 @@ function theme_scs_sortable_table($form) {
       'class' => array('draggable'),
     );
   }
-  $output = theme('table', array('header' => $headers, 'rows' => $rows, 'attributes' => array('id' => 'scs-sort-nodes')));
+  $output = theme('table', array('header' => $headers, 'rows' => $rows, 'attributes' => array('id' => 'simplenews_content_selection-sort-nodes')));
   $info = '';
-  if (isset($form['scs_title']) && isset($form['scs_toc'])) {
-    $info = backdrop_render($form['scs_title']) . backdrop_render($form['scs_toc']);
+  if (isset($form['simplenews_content_selection_title']) && isset($form['simplenews_content_selection_toc'])) {
+    $info = backdrop_render($form['simplenews_content_selection_title']) . backdrop_render($form['simplenews_content_selection_toc']);
   }
   $output = $info . $output . backdrop_render_children($form);
-  backdrop_add_tabledrag('scs-sort-nodes', 'order', 'sibling', 'node-weight');
+  backdrop_add_tabledrag('simplenews_content_selection-sort-nodes', 'order', 'sibling', 'node-weight');
   return $output;
 }
 
 /**
- * Preprocess for scs_newsletter.
+ * Preprocess for simplenews_content_selection_newsletter.
  */
-function template_preprocess_scs_newsletter(&$vars) {
+function template_preprocess_simplenews_content_selection_newsletter(&$vars) {
   // Add Table of Contents (if required)
   if ($vars['toc']) {
-    $vars['toc'] = theme('scs_toc', array('nodes' => $vars['nodes']));
+    $vars['toc'] = theme('simplenews_content_selection_toc', array('nodes' => $vars['nodes']));
   }
 
   // Render each node using the correct view mode
   foreach ($vars['nodes'] as $nid => $node) {
-    $build = node_view($node, $node->scs_view_mode);
+    $build = node_view($node, $node->simplenews_content_selection_view_mode);
 
     // Strip out contextual links
     unset($build['#contextual_links']['node']);
@@ -65,7 +65,7 @@ function template_preprocess_scs_newsletter(&$vars) {
 /**
  * Theme the Table of Contents.
  */
-function theme_scs_toc($vars) {
+function theme_simplenews_content_selection_toc($vars) {
   $titles = array();
   foreach ($vars['nodes'] as $node) {
     $titles[] = $node->title;

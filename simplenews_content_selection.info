@@ -1,0 +1,14 @@
+name = Simplenews Content Selection
+description = Select Backdrop content to create a newsletter
+backdrop = 1.x
+type = module
+package = Mail
+dependencies[] = simplenews
+dependencies[] = views_bulk_operations
+
+configure = admin/config/services/simplenews/settings/simplenews_content_selection
+
+; Added by Backdrop CMS packaging script on 2023-01-14
+project = simplenews_content_selection
+version = 1.x-2.0.0-beta
+timestamp = 1673711260

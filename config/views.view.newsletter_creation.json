@@ -102,7 +102,7 @@
                                 "override_label": 0,
                                 "label": ""
                             },
-                            "action::scs_create_newsletter_action": {
+                            "action::simplenews_content_selection_create_newsletter_action": {
                                 "selected": 1,
                                 "postpone_processing": 0,
                                 "skip_confirmation": 0,

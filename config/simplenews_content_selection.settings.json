@@ -1,0 +1,7 @@
+{
+    "_config_name": "simplenews_content_selection.settings",
+    "simplenews_content_selection_view_mode": {
+      "simplenews_content_selection" : "simplenews_content_selection"
+    },
+    "simplenews_content_selection_node_type": "simplenews"
+}

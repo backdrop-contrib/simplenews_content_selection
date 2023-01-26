@@ -1,0 +1,26 @@
+<?php
+
+/**
+ * @file
+ * Install/Uninstall functions
+ */
+
+/**
+ * Implements hook_update_last_removed().
+ */
+function simplenews_content_selection_update_last_removed() {
+  return 7000;
+}
+
+/**
+ * Migrate simplenews_content_selection variables to config.
+ */
+function simplenews_content_selection_update_1000() {
+  $config = config('simplenews_content_selection.settings');
+  $config->set('simplenews_content_selection_view_mode', update_variable_get('simplenews_content_selection_view_mode', 'simplenews_content_selection'));
+  $config->set('simplenews_content_selection_node_type', update_variable_get('simplenews_content_selection_node_type', 'simplenews'));
+  $config->save();
+
+  update_variable_del('simplenews_content_selection_view_mode');
+  update_variable_del('simplenews_content_selection_node_type');
+}

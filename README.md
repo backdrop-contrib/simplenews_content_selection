@@ -53,10 +53,9 @@ the module configuration.
 You can override the Backdrop way in your theme, for example by specifying a
 custom template for this view mode.
 
-If you add this in the template.php file of your theme:
-
-You will be able to create a `node--post--simplenews-content-selection.tpl.php` that will be taken into
-account after flushing the theme registry and when creating a new newsletter.
+You can, for example, create a `node--post--simplenews-content-selection.tpl.php` that will be taken into
+account after flushing the theme registry and when creating a new newsletter. This way you can modify the way
+nodes are themed when they are inserted into the Body field of the newsletter node.
 
 You can also override the Table of Contents output by implemeting a function in
 your `template.php` file: `function YOURTHEME_simplenews_content_selection_toc($variables) {}`
